@@ -1,13 +1,14 @@
 module AnsiChameleon
   class StyleSheetHandler
 
-    def initialize(style_sheet_hash)
+    def initialize(style_sheet_hash, property_name_translator=nil)
       @map = {}
       @default_values = {}
+      @property_name_translator = property_name_translator
       populate_map(style_sheet_hash)
     end
 
-    attr_reader :map, :default_values
+    attr_reader :map, :default_values, :property_name_translator
 
     def tag_names
       map.keys
@@ -28,11 +29,13 @@ module AnsiChameleon
         when Hash
           populate_map(value, parents + [key.to_sym])
         else
+          property_name = property_name_translator ? property_name_translator.translate(key) : key.to_sym
+
           if parents.any?
-            map[parents.last][key.to_sym] ||= []
-            map[parents.last][key.to_sym] << { :value => value, :parents => parents.take(parents.size - 1) }
+            map[parents.last][property_name] ||= []
+            map[parents.last][property_name] << { :value => value, :parents => parents.take(parents.size - 1) }
           else
-            default_values[key.to_sym] = value
+            default_values[property_name] = value
           end
         end
       end

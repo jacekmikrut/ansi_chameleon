@@ -164,4 +164,42 @@ describe AnsiChameleon::StyleSheetHandler do
       it { subject.value_for(:tag_b, :tag_a, :property).should == :value_in_tag_a_in_tag_b }
     end
   end
+
+  STYLE_SHEET_FOR_TRANSLATOR = {
+    :property_1 => :some_value_1,
+
+    :tag => {
+      :property_1 => :some_value_2,
+      :property_2 => :some_value_3
+    }
+  }
+
+  describe "when initialized with property_name_translator" do
+    subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_FOR_TRANSLATOR, property_name_translator) }
+    let(:property_name_translator) { stub(:property_name_translator) }
+
+    it "should ask the translator to translate each property name found in the style sheet" do
+      property_name_translator.should_receive(:translate).with(:property_1).twice.and_return(:property_1_translated)
+      property_name_translator.should_receive(:translate).with(:property_2).once.and_return(:property_2_translated)
+      subject
+    end
+
+    it "should use translated property names" do
+      property_name_translator.stub(:translate).with(:property_1).and_return(:property_1_translated)
+      property_name_translator.stub(:translate).with(:property_2).and_return(:property_2_translated)
+
+      subject.value_for(      :property_1_translated).should == :some_value_1
+      subject.value_for(:tag, :property_1_translated).should == :some_value_2
+      subject.value_for(:tag, :property_2_translated).should == :some_value_3
+    end
+
+    it "should not use property names defined in the style sheet" do
+      property_name_translator.stub(:translate).with(:property_1).and_return(:property_1_translated)
+      property_name_translator.stub(:translate).with(:property_2).and_return(:property_2_translated)
+
+      subject.value_for(      :property_1).should be_nil
+      subject.value_for(:tag, :property_1).should be_nil
+      subject.value_for(:tag, :property_2).should be_nil
+    end
+  end
 end
