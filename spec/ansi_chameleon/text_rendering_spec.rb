@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe AnsiChameleon::TextConversion do
+describe AnsiChameleon::TextRendering do
 
   def sequence(effect_name, foreground_color_name=nil, background_color_name=nil)
     "[SEQUENCE:#{effect_name}:#{foreground_color_name}:#{background_color_name}]"
@@ -8,7 +8,7 @@ describe AnsiChameleon::TextConversion do
 
   let(:style_sheet_handler) { stub(:style_sheet_handler, :default_values => default_values) }
   let(:default_values) { {} }
-  subject { AnsiChameleon::TextConversion.new(style_sheet_handler) }
+  subject { AnsiChameleon::TextRendering.new(style_sheet_handler) }
 
   before do
     AnsiChameleon::SequenceGenerator.stub(:generate) do |effect_name, foreground_color_name, background_color_name|
@@ -25,10 +25,10 @@ describe AnsiChameleon::TextConversion do
     describe "when the style sheet handler doesn't have any default values" do
       let(:default_values) { {} }
 
-      it "should start with the sequence for #{AnsiChameleon::TextConversion::DEFAULT_STYLE.inspect} values" do
-        effect_name           = AnsiChameleon::TextConversion::DEFAULT_STYLE[:effect_name]
-        foreground_color_name = AnsiChameleon::TextConversion::DEFAULT_STYLE[:foreground_color_name]
-        background_color_name = AnsiChameleon::TextConversion::DEFAULT_STYLE[:background_color_name]
+      it "should start with the sequence for #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect} values" do
+        effect_name           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect_name]
+        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color_name]
+        background_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:background_color_name]
 
         subject.to_s.should be_start_with(sequence(effect_name, foreground_color_name, background_color_name))
       end
@@ -37,8 +37,8 @@ describe AnsiChameleon::TextConversion do
     describe "when the style sheet handler has some default values" do
       let(:default_values) { { :effect_name => :bright, :background_color_name => :blue } }
 
-      it "should start with the sequence for given default values and for missing ones should use #{AnsiChameleon::TextConversion::DEFAULT_STYLE.inspect}" do
-        foreground_color_name = AnsiChameleon::TextConversion::DEFAULT_STYLE[:foreground_color_name]
+      it "should start with the sequence for given default values and for missing ones should use #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect}" do
+        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color_name]
 
         subject.to_s.should be_start_with(sequence(:bright, foreground_color_name, :blue))
       end
@@ -49,7 +49,7 @@ describe AnsiChameleon::TextConversion do
     let(:default_values) { { :effect_name => :default_effect, :foreground_color_name => :default_fg_color, :background_color_name => :default_bg_color } }
 
     describe "for nothing pushed" do
-      it "should return converted text" do
+      it "should return rendered text" do
         subject.to_s.should ==
           "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
           "#{sequence(:reset)}"
@@ -62,7 +62,7 @@ describe AnsiChameleon::TextConversion do
         subject.push_text("Second sentence.")
       end
 
-      it "should return converted text" do
+      it "should return rendered text" do
         subject.to_s.should ==
           "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
           "First sentence. Second sentence." +
@@ -94,7 +94,7 @@ describe AnsiChameleon::TextConversion do
         subject.push_text(" Second sentence.")
       end
 
-      it "should return converted text" do
+      it "should return rendered text" do
         subject.to_s.should ==
           "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
             "First sentence. " +
@@ -137,7 +137,7 @@ describe AnsiChameleon::TextConversion do
         subject.push_text(" Second sentence.")
       end
 
-      it "should return converted text" do
+      it "should return rendered text" do
         subject.to_s.should ==
           "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
             "First sentence. " +

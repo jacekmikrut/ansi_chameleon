@@ -6,23 +6,23 @@ module AnsiChameleon
     end
 
     def convert(text)
-      text_conversion = TextConversion.new(@style_sheet_handler)
+      text_rendering = TextRendering.new(@style_sheet_handler)
 
       chunks(text).each do |chunk|
         case
         when opening_tag?(chunk)
-          text_conversion.push_opening_tag(tag_name(chunk))
+          text_rendering.push_opening_tag(tag_name(chunk))
 
         when closing_tag?(chunk)
-          text_conversion.push_closing_tag(tag_name(chunk))
+          text_rendering.push_closing_tag(tag_name(chunk))
 
         else
-          text_conversion.push_text(chunk)
+          text_rendering.push_text(chunk)
 
         end
       end
 
-      text_conversion.to_s
+      text_rendering.to_s
     end
 
     private

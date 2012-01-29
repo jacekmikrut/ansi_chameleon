@@ -1,5 +1,5 @@
 module AnsiChameleon
-  class TextConversion
+  class TextRendering
 
     DEFAULT_STYLE = {
       :effect_name           => :none,
@@ -12,15 +12,15 @@ module AnsiChameleon
       @stack = []
       @current_style = DEFAULT_STYLE.merge(@style_sheet_handler.default_values)
 
-      @converted_text = ''
-      @converted_text << sequence_for(@current_style)
+      @rendered_text = ''
+      @rendered_text << sequence_for(@current_style)
     end
 
     def push_opening_tag(tag_name)
       @stack.push({ :tag_name => tag_name, :outer_style => @current_style })
 
       @current_style = deduce_current_style
-      @converted_text << sequence_for(@current_style)
+      @rendered_text << sequence_for(@current_style)
     end
 
     def push_closing_tag(tag_name)
@@ -29,11 +29,11 @@ module AnsiChameleon
       end
 
       @current_style = @stack.pop[:outer_style]
-      @converted_text << sequence_for(@current_style)
+      @rendered_text << sequence_for(@current_style)
     end
 
     def push_text(text)
-      @converted_text << text
+      @rendered_text << text
     end
 
     def to_s
@@ -43,7 +43,7 @@ module AnsiChameleon
         raise SyntaxError.new(msg_prefix + " been opened but not closed yet")
       end
 
-      @converted_text + AnsiChameleon::SequenceGenerator.generate(:reset)
+      @rendered_text + AnsiChameleon::SequenceGenerator.generate(:reset)
     end
 
     private
