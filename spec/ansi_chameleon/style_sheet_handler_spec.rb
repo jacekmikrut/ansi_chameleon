@@ -168,6 +168,51 @@ describe AnsiChameleon::StyleSheetHandler do
   STYLE_SHEET_4 = {
     :tag_a => {
       :tag_b => {
+        :property => :value_in_tag_b_in_tag_a
+      }
+    },
+    :tag_c => {
+      :property => :value_in_tag_c
+    }
+  }
+
+  context "for style sheet: #{STYLE_SHEET_4}" do
+    subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_4) }
+
+    describe "value_for(:tag_a, :tag_b, :tag_c, :property)" do
+      it { subject.value_for(:tag_a, :tag_b, :tag_c, :property).should == :value_in_tag_c }
+    end
+  end
+
+  STYLE_SHEET_5 = {
+    :tag_a => {
+      :tag_c => {
+        :property => :value_in_tag_c_in_tag_a
+      }
+    },
+
+    :tag_b => {
+      :tag_c => {
+        :property => :value_in_tag_c_in_tag_b
+      }
+    }
+  }
+
+  context "for style sheet: #{STYLE_SHEET_5}" do
+    subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_5) }
+
+    describe "value_for(:tag_a, :tag_b, :tag_c, :property)" do
+      it { subject.value_for(:tag_a, :tag_b, :tag_c, :property).should == :value_in_tag_c_in_tag_b }
+    end
+
+    describe "value_for(:tag_b, :tag_a, :tag_c, :property)" do
+      it { subject.value_for(:tag_b, :tag_a, :tag_c, :property).should == :value_in_tag_c_in_tag_a }
+    end
+  end
+
+  STYLE_SHEET_6 = {
+    :tag_a => {
+      :tag_b => {
         :tag_d => {
           :property => :value_in_tag_d_in_tag_b_in_tag_a
         }
@@ -181,12 +226,11 @@ describe AnsiChameleon::StyleSheetHandler do
     }
   }
 
-  context "for style sheet: #{STYLE_SHEET_4}" do
-    subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_4) }
+  context "for style sheet: #{STYLE_SHEET_6}" do
+    subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_6) }
 
     describe "value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property)" do
-      before { p subject.map.inspect }
-      it { subject.value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property).should == :value_in_tag_d_in_tag_b_in_tag_a }
+      it { subject.value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property).should == :value_in_tag_d_in_tag_c }
     end
   end
 
