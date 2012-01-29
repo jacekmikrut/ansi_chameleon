@@ -7,4 +7,8 @@ require "ansi_chameleon/text_rendering"
 require "ansi_chameleon/text_renderer"
 
 module AnsiChameleon
+
+  def self.render(text, style_sheet)
+    TextRenderer.new(style_sheet).render(text)
+  end
 end
