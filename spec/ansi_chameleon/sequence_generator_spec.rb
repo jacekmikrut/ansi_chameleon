@@ -16,7 +16,7 @@ describe AnsiChameleon::SequenceGenerator do
       it do
         lambda {
           subject.effect_code(:unknown_effect_name)
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownEffectName)
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownEffectName, "Unknown effect name :unknown_effect_name")
       end
     end
   end
@@ -35,7 +35,7 @@ describe AnsiChameleon::SequenceGenerator do
       it do
         lambda {
           subject.foreground_color_code('unknown_color_name')
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName)
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName, 'Unknown foreground color name "unknown_color_name"')
       end
     end
   end
@@ -54,7 +54,7 @@ describe AnsiChameleon::SequenceGenerator do
       it do
         lambda {
           subject.background_color_code(:unknown_color_name)
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName)
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName, "Unknown background color name :unknown_color_name")
       end
     end
   end
