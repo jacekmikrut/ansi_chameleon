@@ -165,6 +165,31 @@ describe AnsiChameleon::StyleSheetHandler do
     end
   end
 
+  STYLE_SHEET_4 = {
+    :tag_a => {
+      :tag_b => {
+        :tag_d => {
+          :property => :value_in_tag_d_in_tag_b_in_tag_a
+        }
+      }
+    },
+
+    :tag_c => {
+      :tag_d => {
+        :property => :value_in_tag_d_in_tag_c
+      }
+    }
+  }
+
+  context "for style sheet: #{STYLE_SHEET_4}" do
+    subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_4) }
+
+    describe "value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property)" do
+      before { p subject.map.inspect }
+      it { subject.value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property).should == :value_in_tag_d_in_tag_b_in_tag_a }
+    end
+  end
+
   STYLE_SHEET_FOR_TRANSLATOR = {
     :property_1 => :some_value_1,
 

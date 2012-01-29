@@ -59,7 +59,7 @@ module AnsiChameleon
     end
 
     def strongest_style_definition(*tag_names_chain, property_name)
-      matching_style_definitions(*tag_names_chain, property_name).max { |style_definitions| style_definitions[:parents].size }
+      matching_style_definitions(*tag_names_chain, property_name).max_by { |style_definitions| style_definitions[:parents].size }
     end
   end
 end
