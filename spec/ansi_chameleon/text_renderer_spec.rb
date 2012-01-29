@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe AnsiChameleon::TextConverter do
+describe AnsiChameleon::TextRenderer do
 
   let(:style_sheet_handler) { stub(:style_sheet_handler, :tag_names => tag_names) }
   let(:tag_names) { [] }
@@ -13,15 +13,15 @@ describe AnsiChameleon::TextConverter do
       AnsiChameleon::StyleSheetHandler.should_receive(:new).with(style_sheet, AnsiChameleon::StylePropertyNameTranslator).once.and_return(style_sheet_handler)
       AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).twice.and_return(text_rendering)
 
-      text_converter = AnsiChameleon::TextConverter.new(style_sheet)
-      text_converter.convert('Some text')
-      text_converter.convert('Some other text')
+      text_renderer = AnsiChameleon::TextRenderer.new(style_sheet)
+      text_renderer.render('Some text')
+      text_renderer.render('Some other text')
     end
   end
 
-  describe "#convert" do
+  describe "#render" do
     before { AnsiChameleon::StyleSheetHandler.stub(:new => style_sheet_handler) }
-    subject { AnsiChameleon::TextConverter.new(stub(:style_sheet)) }
+    subject { AnsiChameleon::TextRenderer.new(stub(:style_sheet)) }
     let(:rendered_text) { stub(:rendered_text) }
 
     describe "for empty text" do
@@ -30,7 +30,7 @@ describe AnsiChameleon::TextConverter do
         AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
         text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
 
-        subject.convert("").should == rendered_text
+        subject.render("").should == rendered_text
       end
     end
 
@@ -57,7 +57,7 @@ describe AnsiChameleon::TextConverter do
         text_rendering.should_receive(:push_closing_tag).with(:third_tag  ).ordered
         text_rendering.should_receive(:to_s            ).ordered.and_return(rendered_text)
 
-        subject.convert("This <first_tag>is <second_tag>an</second_tag> example</first_tag><third_tag> text.</third_tag>").should == rendered_text
+        subject.render("This <first_tag>is <second_tag>an</second_tag> example</first_tag><third_tag> text.</third_tag>").should == rendered_text
       end
     end
 
@@ -76,7 +76,7 @@ describe AnsiChameleon::TextConverter do
         text_rendering.should_receive(:push_text).with("a</unknown_tag>text.").ordered
         text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
 
-        subject.convert("This <unknown_tag> is a</unknown_tag>text.").should == rendered_text
+        subject.render("This <unknown_tag> is a</unknown_tag>text.").should == rendered_text
       end
     end
   end

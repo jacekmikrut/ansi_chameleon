@@ -1,11 +1,11 @@
 module AnsiChameleon
-  class TextConverter
+  class TextRenderer
 
     def initialize(style_sheet)
       @style_sheet_handler = StyleSheetHandler.new(style_sheet, StylePropertyNameTranslator)
     end
 
-    def convert(text)
+    def render(text)
       text_rendering = TextRendering.new(@style_sheet_handler)
 
       chunks(text).each do |chunk|
