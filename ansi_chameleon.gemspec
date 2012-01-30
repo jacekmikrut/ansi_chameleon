@@ -10,9 +10,8 @@ Gem::Specification.new do |s|
   s.summary       = "Text terminal output coloring tool."
   s.description   = "Colorizes text terminal output by converting custom HTML-like tags into color ANSI escape sequences."
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
-  s.require_paths = ["lib"]
+  s.files         = Dir["lib/**/*", "README*", "LICENSE*", "Changelog*"]
+  s.require_path  = "lib"
 
   s.add_development_dependency "rspec", "~> 2.0"
 end
