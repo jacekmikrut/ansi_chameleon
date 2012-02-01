@@ -26,7 +26,10 @@ module AnsiChameleon
     end
 
     def self.foreground_color_sequence(value)
-      if COLORS.include?(value.to_sym)
+      if number_from_0_to_255?(value)
+        "\033[38;5;#{value}m"
+
+      elsif COLORS.include?(value.to_s.to_sym)
         "\033[#{COLORS.index(value.to_sym) + 30}m"
 
       else
@@ -36,13 +39,20 @@ module AnsiChameleon
     end
 
     def self.background_color_sequence(value)
-      if COLORS.include?(value.to_sym)
+      if number_from_0_to_255?(value)
+        "\033[48;5;#{value}m"
+
+      elsif COLORS.include?(value.to_s.to_sym)
         "\033[#{COLORS.index(value.to_sym) + 40}m"
 
       else
         raise UnknownColorValue.new("Unknown background color value #{value.inspect}")
 
       end
+    end
+
+    def self.number_from_0_to_255?(value)
+      value.to_s =~ /^\d+$/ && (0..255).member?(value.to_i)
     end
   end
 end

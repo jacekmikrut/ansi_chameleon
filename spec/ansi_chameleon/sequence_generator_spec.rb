@@ -33,6 +33,22 @@ describe AnsiChameleon::SequenceGenerator do
       it { should == "\033[37m" }
     end
 
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence('57')" do
+      it { should == "\033[38;5;57m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence(190)" do
+      it { should == "\033[38;5;190m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence(256)" do
+      it do
+        lambda {
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, 'Unknown foreground color value 256')
+      end
+    end
+
     describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence('unknown_color_value')" do
       it do
         lambda {
@@ -50,6 +66,22 @@ describe AnsiChameleon::SequenceGenerator do
 
     describe "AnsiChameleon::SequenceGenerator.background_color_sequence(:yellow)" do
       it { should == "\033[43m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence('255')" do
+      it { should == "\033[48;5;255m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence(2)" do
+      it { should == "\033[48;5;2m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence('256')" do
+      it do
+        lambda {
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, "Unknown background color value \"256\"")
+      end
     end
 
     describe "AnsiChameleon::SequenceGenerator.background_color_sequence(:unknown_color_value)" do
