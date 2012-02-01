@@ -1,8 +1,8 @@
 module AnsiChameleon
   module SequenceGenerator
 
-    class UnknownColorValue  < ArgumentError; end
-    class UnknownEffectValue < ArgumentError; end
+    class InvalidColorValueError  < ArgumentError; end
+    class InvalidEffectValueError < ArgumentError; end
 
     COLORS = [:black, :red, :green, :yellow, :blue, :magenta, :cyan, :white]
     EFFECTS = { :none => 0, :bright => 1, :underline => 4, :blink => 5, :reverse => 7 }
@@ -20,7 +20,7 @@ module AnsiChameleon
         "\033[#{EFFECTS[value.to_sym]}m"
 
       else
-        raise UnknownEffectValue.new("Unknown effect value #{value.inspect}")
+        raise InvalidEffectValueError.new("Invalid effect value #{value.inspect}")
 
       end
     end
@@ -33,7 +33,7 @@ module AnsiChameleon
         "\033[#{COLORS.index(value.to_sym) + 30}m"
 
       else
-        raise UnknownColorValue.new("Unknown foreground color value #{value.inspect}")
+        raise InvalidColorValueError.new("Invalid foreground color value #{value.inspect}")
 
       end
     end
@@ -46,7 +46,7 @@ module AnsiChameleon
         "\033[#{COLORS.index(value.to_sym) + 40}m"
 
       else
-        raise UnknownColorValue.new("Unknown background color value #{value.inspect}")
+        raise InvalidColorValueError.new("Invalid background color value #{value.inspect}")
 
       end
     end

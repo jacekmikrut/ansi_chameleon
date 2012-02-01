@@ -14,11 +14,11 @@ describe AnsiChameleon::SequenceGenerator do
       it { should == "\033[1m" }
     end
 
-    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:unknown_effect_value)" do
+    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:invalid_effect_value)" do
       it do
         lambda {
           subject
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownEffectValue, "Unknown effect value :unknown_effect_value")
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidEffectValueError, "Invalid effect value :invalid_effect_value")
       end
     end
   end
@@ -45,15 +45,15 @@ describe AnsiChameleon::SequenceGenerator do
       it do
         lambda {
           subject
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, 'Unknown foreground color value 256')
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidColorValueError, 'Invalid foreground color value 256')
       end
     end
 
-    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence('unknown_color_value')" do
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence('invalid_color_value')" do
       it do
         lambda {
           subject
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, 'Unknown foreground color value "unknown_color_value"')
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidColorValueError, 'Invalid foreground color value "invalid_color_value"')
       end
     end
   end
@@ -80,15 +80,15 @@ describe AnsiChameleon::SequenceGenerator do
       it do
         lambda {
           subject
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, "Unknown background color value \"256\"")
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidColorValueError, "Invalid background color value \"256\"")
       end
     end
 
-    describe "AnsiChameleon::SequenceGenerator.background_color_sequence(:unknown_color_value)" do
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence(:invalid_color_value)" do
       it do
         lambda {
           subject
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, "Unknown background color value :unknown_color_value")
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidColorValueError, "Invalid background color value :invalid_color_value")
       end
     end
   end
