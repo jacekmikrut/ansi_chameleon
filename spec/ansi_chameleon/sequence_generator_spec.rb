@@ -2,98 +2,78 @@ require "spec_helper"
 
 describe AnsiChameleon::SequenceGenerator do
 
-  describe ".effect_code" do
+  subject { eval(example.example_group.example.example_group.description) }
 
-    describe "(:none)" do
-      it { subject.effect_code(:none).should == 0 }
+  describe ".effect_sequence" do
+
+    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:none)" do
+      it { should == "\033[0m" }
     end
 
-    describe "('bright')" do
-      it { subject.effect_code('bright').should == 1 }
+    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:bright)" do
+      it { should == "\033[1m" }
     end
 
-    describe "(:unknown_effect_name)" do
+    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:unknown_effect_value)" do
       it do
         lambda {
-          subject.effect_code(:unknown_effect_name)
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownEffectName, "Unknown effect name :unknown_effect_name")
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownEffectValue, "Unknown effect value :unknown_effect_value")
       end
     end
   end
 
-  describe ".foreground_color_code" do
+  describe ".foreground_color_sequence" do
 
-    describe "(:green)" do
-      it { subject.foreground_color_code(:green).should == 32 }
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence(:green)" do
+      it { should == "\033[32m" }
     end
 
-    describe "('white')" do
-      it { subject.foreground_color_code('white').should == 37 }
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence('white')" do
+      it { should == "\033[37m" }
     end
 
-    describe "('unknown_color_name')" do
+    describe "AnsiChameleon::SequenceGenerator.foreground_color_sequence('unknown_color_value')" do
       it do
         lambda {
-          subject.foreground_color_code('unknown_color_name')
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName, 'Unknown foreground color name "unknown_color_name"')
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, 'Unknown foreground color value "unknown_color_value"')
       end
     end
   end
 
-  describe ".background_color_code" do
+  describe ".background_color_sequence" do
 
-    describe "('red')" do
-      it { subject.background_color_code('red').should == 41 }
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence('red')" do
+      it { should == "\033[41m" }
     end
 
-    describe "(:yellow)" do
-      it { subject.background_color_code(:yellow).should == 43 }
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence(:yellow)" do
+      it { should == "\033[43m" }
     end
 
-    describe "(:unknown_color_name)" do
+    describe "AnsiChameleon::SequenceGenerator.background_color_sequence(:unknown_color_value)" do
       it do
         lambda {
-          subject.background_color_code(:unknown_color_name)
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName, "Unknown background color name :unknown_color_name")
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorValue, "Unknown background color value :unknown_color_value")
       end
     end
   end
 
   describe ".generate" do
 
-    describe "(:reset)" do
-      it { subject.generate(:reset).should == "\033[0m" }
+    describe "AnsiChameleon::SequenceGenerator.generate(:reset)" do
+      it { should == "\033[0m" }
     end
 
-    describe "(:bright, :black, 'magenta')" do
-      it { subject.generate(:bright, :black, 'magenta').should == "\033[1;30;45m" }
-    end
+    describe "AnsiChameleon::SequenceGenerator.generate(:effect_value, :foreground_color_value, :background_color_value)" do
+      it "should delegate sequences generation to proper methods and return received sequences concatenated in proper order" do
+        AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence          ).with(:effect_value          ).ordered.and_return('[effect_sequence]'          )
+        AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
+        AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
 
-    describe "('none', 'red', :cyan)" do
-      it { subject.generate('none', 'red', :cyan).should == "\033[0;31;46m" }
-    end
-
-    describe "('unknown_effect_name', :green, :white)" do
-      it do
-        lambda {
-          subject.generate('unknown_effect_name', :green, :white)
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownEffectName)
-      end
-    end
-
-    describe "(:underline, :unknown_color_name, :white)" do
-      it do
-        lambda {
-          subject.generate(:underline, :unknown_color_name, :white)
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName)
-      end
-    end
-
-    describe "(:underline, :cyan, 'unknown_color_name')" do
-      it do
-        lambda {
-          subject.generate(:underline, :cyan, 'unknown_color_name')
-        }.should raise_error(AnsiChameleon::SequenceGenerator::UnknownColorName)
+        subject.should == "[effect_sequence][foreground_color_sequence][background_color_sequence]"
       end
     end
   end
