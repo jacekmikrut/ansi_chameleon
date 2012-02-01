@@ -90,7 +90,7 @@ Tag names in a style sheet can be written as either :symbols or "strings".
 * `:foreground_color` (aliases: `:foreground`, `:fg_color`)
 * `:background_color` (aliases: `:background`, `:bg_color`)
 
-    Available color values: `:black`, `:red`, `:green`, `:yellow`, `:blue`, `:magenta`, `:cyan`, `:white`.
+    Available color values: `:black`, `:red`, `:green`, `:yellow`, `:blue`, `:magenta`, `:cyan`, `:white` and a number/string between 0 and 255 that represents a color in xterm 256 color scale.
 
 * `:effect`
 
