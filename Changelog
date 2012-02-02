@@ -1,3 +1,7 @@
+0.1.0 (February 2, 2012)
+  Added support for xterm 256 colors.
+  Made minor code improvements.
+
 0.0.2 (January 30, 2012)
   Fixed a typo in the LICENSE file.
 
