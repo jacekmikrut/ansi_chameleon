@@ -79,5 +79,22 @@ describe AnsiChameleon::TextRenderer do
         subject.render("This <unknown_tag> is a</unknown_tag>text.").should == rendered_text
       end
     end
+
+    describe "for a text that contains words that are the same as some tag names" do
+      let(:text_rendering) { stub(:text_rendering) }
+      let(:tag_names) { [:one, :two, :three] }
+
+      it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
+        AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
+        text_rendering.should_receive(:push_text).with("one"  ).ordered
+        text_rendering.should_receive(:push_text).with(" "    ).ordered
+        text_rendering.should_receive(:push_text).with("two"  ).ordered
+        text_rendering.should_receive(:push_text).with(" "    ).ordered
+        text_rendering.should_receive(:push_text).with("three").ordered
+        text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
+
+        subject.render("one two three").should == rendered_text
+      end
+    end
   end
 end

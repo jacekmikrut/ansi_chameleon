@@ -40,7 +40,7 @@ module AnsiChameleon
     end
 
     def closing_tag_regex
-      @closing_tag_regex ||= /^<\/#{@style_sheet_handler.tag_names.join('|')}>$/
+      @closing_tag_regex ||= /^<\/(?:#{@style_sheet_handler.tag_names.join('|')})>$/
     end
 
     def chunks(text)
