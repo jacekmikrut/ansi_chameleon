@@ -6,7 +6,12 @@ module AnsiChameleon
       self.parent = attrs[:parent]
     end
 
-    attr_accessor :name, :parent
+    attr_accessor :parent
+    attr_reader :name
+
+    def name=(value)
+      @name = value && value.to_s
+    end
 
   end
 end
