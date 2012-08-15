@@ -17,14 +17,17 @@ module AnsiChameleon
     end
 
     def push_opening_tag(tag_name)
-      @stack.push({ :tag_name => tag_name, :outer_style => @current_style })
+      @stack.push({
+        :tag => Tag.new(:name => tag_name, :parent => @stack.last && @stack.last[:tag]),
+        :outer_style => @current_style
+      })
 
       @current_style = deduce_current_style
       @rendered_text << sequence_for(@current_style)
     end
 
     def push_closing_tag(tag_name)
-      unless tag_names_chain.last == tag_name
+      unless @stack.last && @stack.last[:tag].name == tag_name
         raise SyntaxError.new("Encountered </#{tag_name}> tag that had not been opened yet")
       end
 
@@ -38,7 +41,7 @@ module AnsiChameleon
 
     def to_s
       if @stack.any?
-        tag_names = @stack.map { |data| "<#{data[:tag_name]}>" }.join(', ')
+        tag_names = @stack.map { |data| "<#{data[:tag].name}>" }.join(', ')
         msg_prefix = @stack.size == 1 ? "Tag #{tag_names} has" : "Tags #{tag_names} have"
         raise SyntaxError.new(msg_prefix + " been opened but not closed yet")
       end
@@ -57,7 +60,7 @@ module AnsiChameleon
     end
 
     def tag_names_chain
-      @stack.map { |data| data[:tag_name] }
+      @stack.map { |data| data[:tag].name }
     end
 
     def property_names
