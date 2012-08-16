@@ -45,4 +45,23 @@ describe AnsiChameleon::Tag do
 
   end
 
+  describe '#==' do
+    subject(:tag   ) { described_class.new(:name => 'name', :parent => parent) }
+        let(:other ) { described_class.new(:name => 'name', :parent => parent) }
+        let(:parent) { stub(:parent) }
+
+    context 'when tags have the same names and parents' do
+      it { expect(tag == other).to be_true }
+    end
+
+    context 'when tag names are different' do
+      before { other.name = 'different name' }
+      it { expect(tag == other).to be_false }
+    end
+
+    context 'when tag parents are different' do
+      before { other.parent = stub(:different_parent) }
+      it { expect(tag == other).to be_false }
+    end
+  end
 end

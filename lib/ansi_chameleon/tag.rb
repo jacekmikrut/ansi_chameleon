@@ -13,5 +13,8 @@ module AnsiChameleon
       @name = value && value.to_s
     end
 
+    def ==(other)
+      name == other.name && parent == other.parent
+    end
   end
 end
