@@ -10,8 +10,7 @@ describe AnsiChameleon::TextRendering do
     AnsiChameleon::Tag.new(:name => name, :parent => parent)
   end
 
-  let(:style_sheet_handler) { stub(:style_sheet_handler, :default_values => default_values) }
-  let(:default_values) { {} }
+  let(:style_sheet_handler) { stub(:style_sheet_handler, :value_for => nil) }
   subject { AnsiChameleon::TextRendering.new(style_sheet_handler) }
 
   before do
@@ -27,7 +26,6 @@ describe AnsiChameleon::TextRendering do
     end
 
     describe "when the style sheet handler doesn't have any default values" do
-      let(:default_values) { {} }
 
       it "should start with the sequence for #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect} values" do
         effect_name           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect_name]
@@ -39,7 +37,10 @@ describe AnsiChameleon::TextRendering do
     end
 
     describe "when the style sheet handler has some default values" do
-      let(:default_values) { { :effect_name => :bright, :background_color_name => :blue } }
+      before do
+        style_sheet_handler.stub(:value_for).with(nil, :effect_name          ).and_return(:bright)
+        style_sheet_handler.stub(:value_for).with(nil, :background_color_name).and_return(:blue)
+      end
 
       it "should start with the sequence for given default values and for missing ones should use #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect}" do
         foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color_name]
@@ -50,7 +51,11 @@ describe AnsiChameleon::TextRendering do
   end
 
   describe "usage scenarios" do
-    let(:default_values) { { :effect_name => :default_effect, :foreground_color_name => :default_fg_color, :background_color_name => :default_bg_color } }
+    before do
+      style_sheet_handler.stub(:value_for).with(nil, :effect_name          ).and_return(:default_effect)
+      style_sheet_handler.stub(:value_for).with(nil, :foreground_color_name).and_return(:default_fg_color)
+      style_sheet_handler.stub(:value_for).with(nil, :background_color_name).and_return(:default_bg_color)
+    end
 
     describe "for nothing pushed" do
       it "should return rendered text" do

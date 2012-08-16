@@ -10,7 +10,9 @@ module AnsiChameleon
     def initialize(style_sheet_handler)
       @style_sheet_handler = style_sheet_handler
       @stack = []
-      @current_style = DEFAULT_STYLE.merge(@style_sheet_handler.default_values)
+
+      @current_style = DEFAULT_STYLE.dup
+      @current_style = deduce_current_style
 
       @rendered_text = ''
       @rendered_text << sequence_for(@current_style)
