@@ -18,7 +18,7 @@ module AnsiChameleon
 
     def push_opening_tag(tag_name)
       @stack.push({
-        :tag => Tag.new(:name => tag_name, :parent => @stack.last && @stack.last[:tag]),
+        :tag => Tag.new(:name => tag_name.to_s, :parent => @stack.last && @stack.last[:tag]),
         :outer_style => @current_style
       })
 
@@ -27,7 +27,7 @@ module AnsiChameleon
     end
 
     def push_closing_tag(tag_name)
-      unless @stack.last && @stack.last[:tag].name == tag_name
+      unless @stack.last && @stack.last[:tag].name == tag_name.to_s
         raise SyntaxError.new("Encountered </#{tag_name}> tag that had not been opened yet")
       end
 
