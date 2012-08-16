@@ -11,8 +11,8 @@ module AnsiChameleon
 
     attr_reader :tag_names, :default_values, :map, :property_name_translator
 
-    def value_for(*tag_names_chain, property_name)
-      strongest = strongest_style_definition(*(tag_names_chain.map { |tag_name| tag_name.to_sym }), property_name.to_sym)
+    def value_for(tag=nil, property_name)
+      strongest = strongest_style_definition(*(tag_names_chain(tag).map { |tag_name| tag_name.to_sym }), property_name.to_sym)
       strongest && strongest[:value]
     end
 
@@ -48,6 +48,11 @@ module AnsiChameleon
         .compact
         .max_by { |entry|
           entry[:item_spread_map].reverse }
+    end
+
+    def tag_names_chain(tag)
+      return [] if tag.nil?
+      tag_names_chain(tag.parent) << tag.name
     end
   end
 end

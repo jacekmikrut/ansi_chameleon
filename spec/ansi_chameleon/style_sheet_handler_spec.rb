@@ -2,6 +2,10 @@ require "spec_helper"
 
 describe AnsiChameleon::StyleSheetHandler do
 
+  def tag(parent=nil, name)
+    AnsiChameleon::Tag.new(:name => name, :parent => parent)
+  end
+
   STYLE_SHEET_0 = {}
 
   context "for style sheet: #{STYLE_SHEET_0}" do
@@ -14,8 +18,8 @@ describe AnsiChameleon::StyleSheetHandler do
       it { subject.value_for(:unknown_property).should be_nil }
     end
 
-    describe "value_for(:unknown_tag, :unknown_property)" do
-      it { subject.value_for(:unknown_tag, :unknown_property).should be_nil }
+    describe "value_for(tag(:unknown_tag), :unknown_property)" do
+      it { subject.value_for(tag(:unknown_tag), :unknown_property).should be_nil }
     end
   end
 
@@ -41,24 +45,24 @@ describe AnsiChameleon::StyleSheetHandler do
       it { subject.value_for(:unknown_property).should be_nil }
     end
 
-    describe "value_for(:tag, :property)" do
-      it { subject.value_for(:tag, :property).should == :value_in_tag }
+    describe "value_for(tag(:tag), :property)" do
+      it { subject.value_for(tag(:tag), :property).should == :value_in_tag }
     end
 
-    describe "value_for(:tag, :unknown_property)" do
-      it { subject.value_for(:tag, :unknown_property).should be_nil }
+    describe "value_for(tag(:tag), :unknown_property)" do
+      it { subject.value_for(tag(:tag), :unknown_property).should be_nil }
     end
 
-    describe "value_for(:unknown_tag, :property)" do
-      it { subject.value_for(:unknown_tag, :property).should == :default_value }
+    describe "value_for(tag(:unknown_tag), :property)" do
+      it { subject.value_for(tag(:unknown_tag), :property).should == :default_value }
     end
 
-    describe "value_for(:tag, :unknown_tag, :property)" do
-      it { subject.value_for(:tag, :unknown_tag, :property).should == :value_in_tag }
+    describe "value_for(tag(tag(:tag), :unknown_tag), :property)" do
+      it { subject.value_for(tag(tag(:tag), :unknown_tag), :property).should == :value_in_tag }
     end
 
-    describe "value_for(:unknown_tag, :tag, :property)" do
-      it { subject.value_for(:unknown_tag, :tag, :property).should == :value_in_tag }
+    describe "value_for(tag(tag(:unknown_tag), :tag), :property)" do
+      it { subject.value_for(tag(tag(:unknown_tag), :tag), :property).should == :value_in_tag }
     end
   end
 
@@ -84,12 +88,12 @@ describe AnsiChameleon::StyleSheetHandler do
       it { subject.value_for('property').should == 'default_value' }
     end
 
-    describe "value_for(:tag, :property)" do
-      it { subject.value_for(:tag, :property).should == 'value_in_tag' }
+    describe "value_for(tag(:tag), :property)" do
+      it { subject.value_for(tag(:tag), :property).should == 'value_in_tag' }
     end
 
-    describe "value_for('tag', :property)" do
-      it { subject.value_for('tag', :property).should == 'value_in_tag' }
+    describe "value_for(tag('tag'), :property)" do
+      it { subject.value_for(tag('tag'), :property).should == 'value_in_tag' }
     end
   end
 
@@ -111,20 +115,20 @@ describe AnsiChameleon::StyleSheetHandler do
     its(:default_values) { should == { :property => :default_value } }
     its(:tag_names) { should == [:tag_a, :tag_b] }
 
-    describe "value_for(:tag_a, :property)" do
-      it { subject.value_for(:tag_a, :property).should == :value_in_tag_a }
+    describe "value_for(tag(:tag_a), :property)" do
+      it { subject.value_for(tag(:tag_a), :property).should == :value_in_tag_a }
     end
 
-    describe "value_for(:tag_b, :property)" do
-      it { subject.value_for(:tag_b, :property).should == :value_in_tag_b }
+    describe "value_for(tag(:tag_b), :property)" do
+      it { subject.value_for(tag(:tag_b), :property).should == :value_in_tag_b }
     end
 
-    describe "value_for(:tag_a, :tag_b, :property)" do
-      it { subject.value_for(:tag_a, :tag_b, :property).should == :value_in_tag_b }
+    describe "value_for(tag(tag(:tag_a), :tag_b), :property)" do
+      it { subject.value_for(tag(tag(:tag_a), :tag_b), :property).should == :value_in_tag_b }
     end
 
-    describe "value_for(:tag_b, :tag_a, :property)" do
-      it { subject.value_for(:tag_b, :tag_a, :property).should == :value_in_tag_a }
+    describe "value_for(tag(tag(:tag_b), :tag_a), :property)" do
+      it { subject.value_for(tag(tag(:tag_b), :tag_a), :property).should == :value_in_tag_a }
     end
   end
 
@@ -148,20 +152,20 @@ describe AnsiChameleon::StyleSheetHandler do
     its(:default_values) { should == { :property => :default_value } }
     its(:tag_names) { should == [:tag_a, :tag_b] }
 
-    describe "value_for(:tag_a, :property)" do
-      it { subject.value_for(:tag_a, :property).should == :value_in_tag_a }
+    describe "value_for(tag(:tag_a), :property)" do
+      it { subject.value_for(tag(:tag_a), :property).should == :value_in_tag_a }
     end
 
-    describe "value_for(:tag_b, :property)" do
-      it { subject.value_for(:tag_b, :property).should == :default_value }
+    describe "value_for(tag(:tag_b), :property)" do
+      it { subject.value_for(tag(:tag_b), :property).should == :default_value }
     end
 
-    describe "value_for(:tag_a, :tag_b, :property)" do
-      it { subject.value_for(:tag_a, :tag_b, :property).should == :value_in_tag_a }
+    describe "value_for(tag(tag(:tag_a), :tag_b), :property)" do
+      it { subject.value_for(tag(tag(:tag_a), :tag_b), :property).should == :value_in_tag_a }
     end
 
-    describe "value_for(:tag_b, :tag_a, :property)" do
-      it { subject.value_for(:tag_b, :tag_a, :property).should == :value_in_tag_a_in_tag_b }
+    describe "value_for(tag(tag(:tag_b), :tag_a), :property)" do
+      it { subject.value_for(tag(tag(:tag_b), :tag_a), :property).should == :value_in_tag_a_in_tag_b }
     end
   end
 
@@ -179,8 +183,8 @@ describe AnsiChameleon::StyleSheetHandler do
   context "for style sheet: #{STYLE_SHEET_4}" do
     subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_4) }
 
-    describe "value_for(:tag_a, :tag_b, :tag_c, :property)" do
-      it { subject.value_for(:tag_a, :tag_b, :tag_c, :property).should == :value_in_tag_c }
+    describe "value_for(tag(tag(tag(:tag_a), :tag_b), :tag_c), :property)" do
+      it { subject.value_for(tag(tag(tag(:tag_a), :tag_b), :tag_c), :property).should == :value_in_tag_c }
     end
   end
 
@@ -201,12 +205,12 @@ describe AnsiChameleon::StyleSheetHandler do
   context "for style sheet: #{STYLE_SHEET_5}" do
     subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_5) }
 
-    describe "value_for(:tag_a, :tag_b, :tag_c, :property)" do
-      it { subject.value_for(:tag_a, :tag_b, :tag_c, :property).should == :value_in_tag_c_in_tag_b }
+    describe "value_for(tag(tag(tag(:tag_a), :tag_b), :tag_c), :property)" do
+      it { subject.value_for(tag(tag(tag(:tag_a), :tag_b), :tag_c), :property).should == :value_in_tag_c_in_tag_b }
     end
 
-    describe "value_for(:tag_b, :tag_a, :tag_c, :property)" do
-      it { subject.value_for(:tag_b, :tag_a, :tag_c, :property).should == :value_in_tag_c_in_tag_a }
+    describe "value_for(tag(tag(tag(:tag_b), :tag_a), :tag_c), :property)" do
+      it { subject.value_for(tag(tag(tag(:tag_b), :tag_a), :tag_c), :property).should == :value_in_tag_c_in_tag_a }
     end
   end
 
@@ -229,8 +233,8 @@ describe AnsiChameleon::StyleSheetHandler do
   context "for style sheet: #{STYLE_SHEET_6}" do
     subject { AnsiChameleon::StyleSheetHandler.new(STYLE_SHEET_6) }
 
-    describe "value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property)" do
-      it { subject.value_for(:tag_a, :tag_b, :tag_c, :tag_d, :property).should == :value_in_tag_d_in_tag_c }
+    describe "value_for(tag(tag(tag(tag(:tag_a), :tag_b), :tag_c), :tag_d), :property)" do
+      it { subject.value_for(tag(tag(tag(tag(:tag_a), :tag_b), :tag_c), :tag_d), :property).should == :value_in_tag_d_in_tag_c }
     end
   end
 
@@ -257,18 +261,18 @@ describe AnsiChameleon::StyleSheetHandler do
       property_name_translator.stub(:translate).with(:property_1).and_return(:property_1_translated)
       property_name_translator.stub(:translate).with(:property_2).and_return(:property_2_translated)
 
-      subject.value_for(      :property_1_translated).should == :some_value_1
-      subject.value_for(:tag, :property_1_translated).should == :some_value_2
-      subject.value_for(:tag, :property_2_translated).should == :some_value_3
+      subject.value_for(           :property_1_translated).should == :some_value_1
+      subject.value_for(tag(:tag), :property_1_translated).should == :some_value_2
+      subject.value_for(tag(:tag), :property_2_translated).should == :some_value_3
     end
 
     it "should not use property names defined in the style sheet" do
       property_name_translator.stub(:translate).with(:property_1).and_return(:property_1_translated)
       property_name_translator.stub(:translate).with(:property_2).and_return(:property_2_translated)
 
-      subject.value_for(      :property_1).should be_nil
-      subject.value_for(:tag, :property_1).should be_nil
-      subject.value_for(:tag, :property_2).should be_nil
+      subject.value_for(           :property_1).should be_nil
+      subject.value_for(tag(:tag), :property_1).should be_nil
+      subject.value_for(tag(:tag), :property_2).should be_nil
     end
   end
 end

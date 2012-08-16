@@ -6,6 +6,10 @@ describe AnsiChameleon::TextRendering do
     "[SEQUENCE:#{effect_name}:#{foreground_color_name}:#{background_color_name}]"
   end
 
+  def tag(parent=nil, name)
+    AnsiChameleon::Tag.new(:name => name, :parent => parent)
+  end
+
   let(:style_sheet_handler) { stub(:style_sheet_handler, :default_values => default_values) }
   let(:default_values) { {} }
   subject { AnsiChameleon::TextRendering.new(style_sheet_handler) }
@@ -72,13 +76,13 @@ describe AnsiChameleon::TextRendering do
 
     describe "for some text and non-nested tags pushed" do
       before do
-        style_sheet_handler.should_receive(:value_for).with('tag_a', :effect_name          ).and_return(nil            )
-        style_sheet_handler.should_receive(:value_for).with('tag_a', :foreground_color_name).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with('tag_a', :background_color_name).and_return(:tag_a_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :effect_name          ).and_return(nil            )
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :foreground_color_name).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :background_color_name).and_return(:tag_a_bg_color)
 
-        style_sheet_handler.should_receive(:value_for).with('tag_b', :effect_name          ).and_return(:tag_b_effect  )
-        style_sheet_handler.should_receive(:value_for).with('tag_b', :foreground_color_name).and_return(:tag_b_fg_color)
-        style_sheet_handler.should_receive(:value_for).with('tag_b', :background_color_name).and_return(:tag_b_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_b'), :effect_name          ).and_return(:tag_b_effect  )
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_b'), :foreground_color_name).and_return(:tag_b_fg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_b'), :background_color_name).and_return(:tag_b_bg_color)
 
         subject.push_text("First sentence. ")
 
@@ -114,13 +118,13 @@ describe AnsiChameleon::TextRendering do
 
     describe "for some text and nested tags pushed" do
       before do
-        style_sheet_handler.should_receive(:value_for).with('tag_a', :effect_name          ).and_return(nil            )
-        style_sheet_handler.should_receive(:value_for).with('tag_a', :foreground_color_name).and_return(:tag_a_fg_color)
-        style_sheet_handler.should_receive(:value_for).with('tag_a', :background_color_name).and_return(:tag_a_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :effect_name          ).and_return(nil            )
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :foreground_color_name).and_return(:tag_a_fg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :background_color_name).and_return(:tag_a_bg_color)
 
-        style_sheet_handler.should_receive(:value_for).with('tag_a', 'tag_b', :effect_name          ).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with('tag_a', 'tag_b', :foreground_color_name).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with('tag_a', 'tag_b', :background_color_name).and_return(:tag_b_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag(tag('tag_a'), 'tag_b'), :effect_name          ).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag(tag('tag_a'), 'tag_b'), :foreground_color_name).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag(tag('tag_a'), 'tag_b'), :background_color_name).and_return(:tag_b_bg_color)
 
         subject.push_text("First sentence. ")
 

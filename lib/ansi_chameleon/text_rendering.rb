@@ -59,17 +59,13 @@ module AnsiChameleon
       )
     end
 
-    def tag_names_chain
-      @stack.map { |data| data[:tag].name }
-    end
-
     def property_names
       DEFAULT_STYLE.keys
     end
 
     def deduce_current_style
       property_names.inject({}) do |style, property_name|
-        property_value = @style_sheet_handler.value_for(*tag_names_chain, property_name)
+        property_value = @style_sheet_handler.value_for(@stack.last && @stack.last[:tag], property_name)
         style[property_name] = [:inherit, nil].include?(property_value) ? @current_style[property_name] : property_value
         style
       end
