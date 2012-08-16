@@ -14,6 +14,7 @@ module AnsiChameleon
     end
 
     def ==(other)
+      return false if other.nil?
       name == other.name && parent == other.parent
     end
   end

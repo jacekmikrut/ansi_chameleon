@@ -63,5 +63,9 @@ describe AnsiChameleon::Tag do
       before { other.parent = stub(:different_parent) }
       it { expect(tag == other).to be_false }
     end
+
+    context 'when compared to nil' do
+      it { expect(tag == nil).to be_false }
+    end
   end
 end
