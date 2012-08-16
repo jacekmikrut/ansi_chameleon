@@ -5,7 +5,7 @@ module AnsiChameleon
       :effect_name           => :none,
       :foreground_color_name => :white,
       :background_color_name => :black
-    }
+    }.freeze
 
     def initialize(style_sheet_handler)
       @style_sheet_handler = style_sheet_handler
