@@ -1,6 +1,10 @@
 module AnsiChameleon
   class TextRenderer
 
+    CHUNK_REGEX = /<\/?[_a-zA-Z]\w*>|[\w\.]+|\S|\s/.freeze
+    OPENING_TAG_REGEX = /\A<[^\/].*>\z/.freeze
+    CLOSING_TAG_REGEX = /\A<\/.+>\z/.freeze
+
     def initialize(style_sheet)
       @style_sheet_handler = StyleSheetHandler.new(style_sheet, StylePropertyNameTranslator)
     end
@@ -27,32 +31,16 @@ module AnsiChameleon
 
     private
 
-    def tag_names_regex
-      @tag_names_regex ||= @style_sheet_handler.tag_names.map { |tag_name| "(?<=<#{tag_name}>)|(?<=<\/#{tag_name}>)|(?=<\/?#{tag_name}>)" }.join('|')
-    end
-
-    def chunk_regex
-      @chunk_regex ||= /(?<= |\t)|(?= |\t)#{'|' + tag_names_regex unless tag_names_regex.empty?}/
-    end
-
-    def opening_tag_regex
-      @opening_tag_regex ||= /^<(?<=[^\/])(?:#{@style_sheet_handler.tag_names.join('|')})>$/
-    end
-
-    def closing_tag_regex
-      @closing_tag_regex ||= /^<\/(?:#{@style_sheet_handler.tag_names.join('|')})>$/
-    end
-
     def chunks(text)
-      text.split(chunk_regex)
+      text.scan(CHUNK_REGEX)
     end
 
     def opening_tag?(chunk)
-      chunk =~ opening_tag_regex
+      chunk =~ OPENING_TAG_REGEX
     end
 
     def closing_tag?(chunk)
-      chunk =~ closing_tag_regex
+      chunk =~ CLOSING_TAG_REGEX
     end
 
     def tag_name(chunk)
