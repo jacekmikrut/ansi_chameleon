@@ -22,15 +22,31 @@ describe AnsiChameleon::TextRenderer do
   describe "#render" do
     before { AnsiChameleon::StyleSheetHandler.stub(:new => style_sheet_handler) }
     subject { AnsiChameleon::TextRenderer.new(stub(:style_sheet)) }
-    let(:text_rendering) { stub(:text_rendering) }
+    before { AnsiChameleon::TextRendering.stub(:new => text_rendering) }
+    let(:text_rendering) { stub(:text_rendering, :to_s => rendered_text) }
     let(:rendered_text) { stub(:rendered_text) }
 
-    describe "for empty text" do
-      it "should create AnsiChameleon::TextRendering and simply call #to_s" do
-        AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
-        text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
+    it "should create AnsiChameleon::TextRendering with the style sheet handler for every call" do
+      AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).exactly(3).times.and_return(text_rendering)
+      subject.render("")
+      subject.render("")
+      subject.render("")
+    end
 
-        subject.render("").should == rendered_text
+    it "should return the value obtained from the text_rendering#to_s" do
+      text_rendering.should_receive(:to_s).once.and_return(rendered_text)
+      subject.render("").should == rendered_text
+    end
+
+    describe "for empty text" do
+      let(:text) { "" }
+
+      it "should not push anything to text_rendering object" do
+        text_rendering.should_not_receive(:push_text)
+        text_rendering.should_not_receive(:push_opening_tag)
+        text_rendering.should_not_receive(:push_closing_tag)
+
+        subject.render(text)
       end
     end
 
@@ -38,8 +54,7 @@ describe AnsiChameleon::TextRenderer do
       let(:text) { "This <first_tag>is <second_tag>an</second_tag> example</first_tag><third_tag> text.</third_tag>" }
       let(:tag_names) { [:first_tag, :second_tag, :third_tag] }
 
-      it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
-        AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
+      it "should push proper data to text_rendering object" do
         text_rendering.should_receive(:push_text       ).with("This"      ).ordered
         text_rendering.should_receive(:push_text       ).with(" "         ).ordered
         text_rendering.should_receive(:push_opening_tag).with("first_tag" ).ordered
@@ -55,9 +70,8 @@ describe AnsiChameleon::TextRenderer do
         text_rendering.should_receive(:push_text       ).with(" "         ).ordered
         text_rendering.should_receive(:push_text       ).with("text."     ).ordered
         text_rendering.should_receive(:push_closing_tag).with("third_tag" ).ordered
-        text_rendering.should_receive(:to_s            ).ordered.and_return(rendered_text)
 
-        subject.render(text).should == rendered_text
+        subject.render(text)
       end
     end
 
@@ -65,8 +79,7 @@ describe AnsiChameleon::TextRenderer do
       let(:text) { "This <unknown_tag> is a</unknown_tag>text." }
       let(:tag_names) { [] }
 
-      it "should create AnsiChameleon::TextRendering instance and push unknown tags as normal text" do
-        AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
+      it "should push unknown tags to text_rendering object as normal text" do
         text_rendering.should_receive(:push_text).with("This"                ).ordered
         text_rendering.should_receive(:push_text).with(" "                   ).ordered
         text_rendering.should_receive(:push_text).with("<unknown_tag>"       ).ordered
@@ -74,9 +87,8 @@ describe AnsiChameleon::TextRenderer do
         text_rendering.should_receive(:push_text).with("is"                  ).ordered
         text_rendering.should_receive(:push_text).with(" "                   ).ordered
         text_rendering.should_receive(:push_text).with("a</unknown_tag>text.").ordered
-        text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
 
-        subject.render(text).should == rendered_text
+        subject.render(text)
       end
     end
 
@@ -84,16 +96,14 @@ describe AnsiChameleon::TextRenderer do
       let(:text) { "one two three" }
       let(:tag_names) { [:one, :two, :three] }
 
-      it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
-        AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
+      it "should push unknown tags to text_rendering object as normal text" do
         text_rendering.should_receive(:push_text).with("one"  ).ordered
         text_rendering.should_receive(:push_text).with(" "    ).ordered
         text_rendering.should_receive(:push_text).with("two"  ).ordered
         text_rendering.should_receive(:push_text).with(" "    ).ordered
         text_rendering.should_receive(:push_text).with("three").ordered
-        text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
 
-        subject.render(text).should == rendered_text
+        subject.render(text)
       end
     end
   end
