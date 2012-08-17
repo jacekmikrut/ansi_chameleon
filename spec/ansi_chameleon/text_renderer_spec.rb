@@ -38,7 +38,7 @@ describe AnsiChameleon::TextRenderer do
       subject.render("").should == rendered_text
     end
 
-    describe "for empty text" do
+    context "for empty text" do
       let(:text) { "" }
 
       it "should not push anything to text_rendering object" do
@@ -50,7 +50,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text without tags" do
+    context "for text without tags" do
       let(:text) { "This is some text." }
 
       it "should push push proper text chunks, but no tags to text_rendering object" do
@@ -66,7 +66,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text with multiple whitespaces" do
+    context "for text with multiple whitespaces" do
       let(:text) { "  \tSome  text. " }
 
       it "should push push separate text chunk for every whitespace character" do
@@ -83,7 +83,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text with tags surrounded by whitespaces" do
+    context "for text with tags surrounded by whitespaces" do
       let(:text) { "Outside <tag> inside </tag> outside." }
       let(:tag_names) { [:tag] }
 
@@ -102,7 +102,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text with tags surrounded immediately by text" do
+    context "for text with tags surrounded immediately by text" do
       let(:text) { "Outside<tag>inside</tag>outside." }
       let(:tag_names) { [:tag] }
 
@@ -117,7 +117,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text that starts and ends with tags" do
+    context "for text that starts and ends with tags" do
       let(:text) { "<tag>inside</tag>" }
       let(:tag_names) { [:tag] }
 
@@ -130,7 +130,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text with tags of empty content" do
+    context "for text with tags of empty content" do
       let(:text) { "Outside <tag></tag> outside." }
       let(:tag_names) { [:tag] }
 
@@ -146,7 +146,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for text with nested tags" do
+    context "for text with nested tags" do
       let(:text) { "Outside <tag1><tag2>inside</tag2>inside</tag1> outside." }
       let(:tag_names) { [:tag1, :tag2] }
 
@@ -166,7 +166,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for a text that contains tags not recognized by the style_sheet_handler" do
+    context "for a text that contains tags not recognized by the style_sheet_handler" do
       let(:text) { "This <unknown_tag> is a</unknown_tag>text." }
       let(:tag_names) { [] }
 
@@ -183,7 +183,7 @@ describe AnsiChameleon::TextRenderer do
       end
     end
 
-    describe "for a text that contains words that are the same as some tag names" do
+    context "for a text that contains words that are the same as some tag names" do
       let(:text) { "one two three" }
       let(:tag_names) { [:one, :two, :three] }
 
