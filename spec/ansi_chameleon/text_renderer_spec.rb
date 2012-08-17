@@ -52,7 +52,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text without tags" do
       let(:text) { "This is some text." }
 
-      it "should push push proper text chunks, but no tags to text_rendering object" do
+      it "should push proper text chunks, but no tags to text_rendering object" do
         text_rendering.should_receive(:push_text).with("This" ).ordered
         text_rendering.should_receive(:push_text).with(" "    ).ordered
         text_rendering.should_receive(:push_text).with("is"   ).ordered
@@ -68,7 +68,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text with multiple whitespaces" do
       let(:text) { "  \tSome  text. " }
 
-      it "should push push separate text chunk for every whitespace character" do
+      it "should push separate text chunk for every whitespace character" do
         text_rendering.should_receive(:push_text).with(" "    ).ordered
         text_rendering.should_receive(:push_text).with(" "    ).ordered
         text_rendering.should_receive(:push_text).with("\t"   ).ordered
@@ -85,7 +85,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text with tags surrounded by whitespaces" do
       let(:text) { "Outside <tag> inside </tag> outside." }
 
-      it "should push push proper text and tag chunks" do
+      it "should push proper text and tag chunks" do
         text_rendering.should_receive(:push_text       ).with("Outside"  ).ordered
         text_rendering.should_receive(:push_text       ).with(" "        ).ordered
         text_rendering.should_receive(:push_opening_tag).with("tag"      ).ordered
@@ -103,7 +103,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text with tags surrounded immediately by text" do
       let(:text) { "Outside<tag>inside</tag>outside." }
 
-      it "should push push proper text and tag chunks" do
+      it "should push proper text and tag chunks" do
         text_rendering.should_receive(:push_text       ).with("Outside"  ).ordered
         text_rendering.should_receive(:push_opening_tag).with("tag"      ).ordered
         text_rendering.should_receive(:push_text       ).with("inside"   ).ordered
@@ -117,7 +117,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text that starts and ends with tags" do
       let(:text) { "<tag>inside</tag>" }
 
-      it "should push push proper text and tag chunks" do
+      it "should push proper text and tag chunks" do
         text_rendering.should_receive(:push_opening_tag).with("tag"      ).ordered
         text_rendering.should_receive(:push_text       ).with("inside"   ).ordered
         text_rendering.should_receive(:push_closing_tag).with("tag"      ).ordered
@@ -129,7 +129,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text with tags of empty content" do
       let(:text) { "Outside <tag></tag> outside." }
 
-      it "should push push proper text and tag chunks" do
+      it "should push proper text and tag chunks" do
         text_rendering.should_receive(:push_text       ).with("Outside" ).ordered
         text_rendering.should_receive(:push_text       ).with(" "       ).ordered
         text_rendering.should_receive(:push_opening_tag).with("tag"     ).ordered
@@ -144,7 +144,7 @@ describe AnsiChameleon::TextRenderer do
     context "for text with nested tags" do
       let(:text) { "Outside <tag1><tag2>inside</tag2>inside</tag1> outside." }
 
-      it "should push push proper text and tag chunks" do
+      it "should push proper text and tag chunks" do
         text_rendering.should_receive(:push_text       ).with("Outside" ).ordered
         text_rendering.should_receive(:push_text       ).with(" "       ).ordered
         text_rendering.should_receive(:push_opening_tag).with("tag1"    ).ordered
