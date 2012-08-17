@@ -22,10 +22,10 @@ describe AnsiChameleon::TextRenderer do
   describe "#render" do
     before { AnsiChameleon::StyleSheetHandler.stub(:new => style_sheet_handler) }
     subject { AnsiChameleon::TextRenderer.new(stub(:style_sheet)) }
+    let(:text_rendering) { stub(:text_rendering) }
     let(:rendered_text) { stub(:rendered_text) }
 
     describe "for empty text" do
-      let(:text_rendering) { stub(:text_rendering) }
       it "should create AnsiChameleon::TextRendering and simply call #to_s" do
         AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
         text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
@@ -35,7 +35,6 @@ describe AnsiChameleon::TextRenderer do
     end
 
     describe "for a text with some tags" do
-      let(:text_rendering) { stub(:text_rendering) }
       let(:tag_names) { [:first_tag, :second_tag, :third_tag] }
 
       it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
@@ -62,7 +61,6 @@ describe AnsiChameleon::TextRenderer do
     end
 
     describe "for a text that contains tags not recognized by the style_sheet_handler" do
-      let(:text_rendering) { stub(:text_rendering) }
       let(:tag_names) { [] }
 
       it "should create AnsiChameleon::TextRendering instance and push unknown tags as normal text" do
@@ -81,7 +79,6 @@ describe AnsiChameleon::TextRenderer do
     end
 
     describe "for a text that contains words that are the same as some tag names" do
-      let(:text_rendering) { stub(:text_rendering) }
       let(:tag_names) { [:one, :two, :three] }
 
       it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
