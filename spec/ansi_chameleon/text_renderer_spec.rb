@@ -35,6 +35,7 @@ describe AnsiChameleon::TextRenderer do
     end
 
     describe "for a text with some tags" do
+      let(:text) { "This <first_tag>is <second_tag>an</second_tag> example</first_tag><third_tag> text.</third_tag>" }
       let(:tag_names) { [:first_tag, :second_tag, :third_tag] }
 
       it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
@@ -56,11 +57,12 @@ describe AnsiChameleon::TextRenderer do
         text_rendering.should_receive(:push_closing_tag).with("third_tag" ).ordered
         text_rendering.should_receive(:to_s            ).ordered.and_return(rendered_text)
 
-        subject.render("This <first_tag>is <second_tag>an</second_tag> example</first_tag><third_tag> text.</third_tag>").should == rendered_text
+        subject.render(text).should == rendered_text
       end
     end
 
     describe "for a text that contains tags not recognized by the style_sheet_handler" do
+      let(:text) { "This <unknown_tag> is a</unknown_tag>text." }
       let(:tag_names) { [] }
 
       it "should create AnsiChameleon::TextRendering instance and push unknown tags as normal text" do
@@ -74,11 +76,12 @@ describe AnsiChameleon::TextRenderer do
         text_rendering.should_receive(:push_text).with("a</unknown_tag>text.").ordered
         text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
 
-        subject.render("This <unknown_tag> is a</unknown_tag>text.").should == rendered_text
+        subject.render(text).should == rendered_text
       end
     end
 
     describe "for a text that contains words that are the same as some tag names" do
+      let(:text) { "one two three" }
       let(:tag_names) { [:one, :two, :three] }
 
       it "should create AnsiChameleon::TextRendering instance and push tags and text chunks found in given text" do
@@ -90,7 +93,7 @@ describe AnsiChameleon::TextRenderer do
         text_rendering.should_receive(:push_text).with("three").ordered
         text_rendering.should_receive(:to_s     ).ordered.and_return(rendered_text)
 
-        subject.render("one two three").should == rendered_text
+        subject.render(text).should == rendered_text
       end
     end
   end
