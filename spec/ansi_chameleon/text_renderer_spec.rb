@@ -42,19 +42,19 @@ describe AnsiChameleon::TextRenderer do
         AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).and_return(text_rendering)
         text_rendering.should_receive(:push_text       ).with("This"      ).ordered
         text_rendering.should_receive(:push_text       ).with(" "         ).ordered
-        text_rendering.should_receive(:push_opening_tag).with(:first_tag  ).ordered
+        text_rendering.should_receive(:push_opening_tag).with("first_tag" ).ordered
         text_rendering.should_receive(:push_text       ).with("is"        ).ordered
         text_rendering.should_receive(:push_text       ).with(" "         ).ordered
-        text_rendering.should_receive(:push_opening_tag).with(:second_tag ).ordered
+        text_rendering.should_receive(:push_opening_tag).with("second_tag").ordered
         text_rendering.should_receive(:push_text       ).with("an"        ).ordered
-        text_rendering.should_receive(:push_closing_tag).with(:second_tag ).ordered
+        text_rendering.should_receive(:push_closing_tag).with("second_tag").ordered
         text_rendering.should_receive(:push_text       ).with(" "         ).ordered
         text_rendering.should_receive(:push_text       ).with("example"   ).ordered
-        text_rendering.should_receive(:push_closing_tag).with(:first_tag  ).ordered
-        text_rendering.should_receive(:push_opening_tag).with(:third_tag  ).ordered
+        text_rendering.should_receive(:push_closing_tag).with("first_tag" ).ordered
+        text_rendering.should_receive(:push_opening_tag).with("third_tag" ).ordered
         text_rendering.should_receive(:push_text       ).with(" "         ).ordered
         text_rendering.should_receive(:push_text       ).with("text."     ).ordered
-        text_rendering.should_receive(:push_closing_tag).with(:third_tag  ).ordered
+        text_rendering.should_receive(:push_closing_tag).with("third_tag" ).ordered
         text_rendering.should_receive(:to_s            ).ordered.and_return(rendered_text)
 
         subject.render("This <first_tag>is <second_tag>an</second_tag> example</first_tag><third_tag> text.</third_tag>").should == rendered_text

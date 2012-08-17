@@ -56,7 +56,7 @@ module AnsiChameleon
     end
 
     def tag_name(chunk)
-      chunk.match(/^<\/?(?<tag_name>.*)>$/)[:tag_name].to_sym
+      chunk.match(/^<\/?(?<tag_name>.*)>$/)[:tag_name]
     end
   end
 end
