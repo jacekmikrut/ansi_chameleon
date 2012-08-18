@@ -1,7 +1,7 @@
 module AnsiChameleon
   class TextRenderer
 
-    CHUNK_REGEX = /<\/?[_a-zA-Z]\w*>|[\w\.]+|\S|\s/.freeze
+    CHUNK_REGEX = /<\/?[_a-zA-Z]\w*>|(?:[^<]|<(?=[^\/_a-zA-Z]))+/.freeze
     OPENING_TAG_REGEX = /\A<[^\/].*>\z/.freeze
     CLOSING_TAG_REGEX = /\A<\/.+>\z/.freeze
 
