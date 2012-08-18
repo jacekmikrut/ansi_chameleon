@@ -6,11 +6,14 @@ describe AnsiChameleon::Tag do
   it { should respond_to(:name=) }
   it { should respond_to(:parent) }
   it { should respond_to(:parent=) }
+  it { should respond_to(:original_string) }
+  it { should respond_to(:original_string=) }
 
   describe 'after initialization' do
     context 'without parameters' do
       its(:name) { should be_nil }
       its(:parent) { should be_nil }
+      its(:original_string) { should be_nil }
     end
 
     context 'with :name value given as string' do
@@ -27,6 +30,12 @@ describe AnsiChameleon::Tag do
       subject(:tag) { described_class.new(:parent => parent) }
       let(:parent) { stub(:parent) }
       it('should have that value set') { tag.parent.should equal(parent) }
+    end
+
+    context 'with :original_string value' do
+      subject(:tag) { described_class.new(:original_string => original_string) }
+      let(:original_string) { '<tag>' }
+      it('should have that value set') { tag.original_string.should equal(original_string) }
     end
   end
 

@@ -4,9 +4,10 @@ module AnsiChameleon
     def initialize(attrs={})
       self.name   = attrs[:name]
       self.parent = attrs[:parent]
+      self.original_string = attrs[:original_string]
     end
 
-    attr_accessor :parent
+    attr_accessor :parent, :original_string
     attr_reader :name
 
     def name=(value)
