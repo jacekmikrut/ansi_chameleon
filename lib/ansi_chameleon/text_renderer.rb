@@ -1,9 +1,13 @@
 module AnsiChameleon
   class TextRenderer
 
-    CHUNK_REGEX = /<\/?[_a-zA-Z]\w*>|(?:[^<]|<(?=[^\/_a-zA-Z])|<\/(?=[^_a-zA-Z])|<[^>]*\z)+/.freeze
-    OPENING_TAG_REGEX = /\A<[_a-zA-Z]\w*>\z/.freeze
-    CLOSING_TAG_REGEX = /\A<\/[_a-zA-Z]\w*>\z/.freeze
+    TAG_NAME_FIRST_CHAR_REG = "[_a-zA-Z]"
+    TAG_NAME_OTHER_CHARS_REG = "\\w*"
+    TAG_NAME_REG = TAG_NAME_FIRST_CHAR_REG + TAG_NAME_OTHER_CHARS_REG
+
+    CHUNK_REGEX = /<\/?#{TAG_NAME_REG}>|(?:[^<]|<(?!\/)(?!#{TAG_NAME_FIRST_CHAR_REG})|<\/(?!#{TAG_NAME_FIRST_CHAR_REG})|<[^>]*\z)+/.freeze
+    OPENING_TAG_REGEX = /\A<#{TAG_NAME_REG}>\z/.freeze
+    CLOSING_TAG_REGEX = /\A<\/#{TAG_NAME_REG}>\z/.freeze
 
     def initialize(style_sheet)
       @style_sheet_handler = StyleSheetHandler.new(style_sheet, StylePropertyNameTranslator)
