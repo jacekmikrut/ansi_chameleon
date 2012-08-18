@@ -179,11 +179,13 @@ describe AnsiChameleon::TextRenderer do
     end
 
     should_recognize_these_strings_as_opening_tags(
-      "<abc>", "<ABC>", "<a12345>", "<a>", "<A>"
+      "<abc>", "<ABC>", "<a12345>", "<a>", "<A>",
+      "<a_b_c>", "<_abc>", "<abc_>", "<_>"
     )
 
     should_recognize_these_strings_as_closing_tags(
-      "</abc>", "</ABC>", "</a12345>", "</a>", "</A>"
+      "</abc>", "</ABC>", "</a12345>", "</a>", "</A>",
+      "</a_b_c>", "</_abc>", "</abc_>", "</_>"
     )
 
     should_recognize_these_strings_as_normal_text(
