@@ -20,6 +20,17 @@ describe AnsiChameleon::TextRenderer do
     end
   end
 
+  def self.should_recognize_these_strings_as_normal_text(*items)
+    items.each do |item|
+      it "should recognize #{item.inspect} as normal text" do
+        text_rendering.should_not_receive(:push_opening_tag)
+        text_rendering.should_not_receive(:push_closing_tag)
+        text_rendering.should_receive(:push_text).with(item)
+        subject.render(item)
+      end
+    end
+  end
+
   let(:style_sheet_handler) { stub(:style_sheet_handler) }
 
   describe "each instance" do
@@ -173,6 +184,11 @@ describe AnsiChameleon::TextRenderer do
 
     should_recognize_these_strings_as_closing_tags(
       "</abc>", "</ABC>", "</a12345>", "</a>", "</A>"
+    )
+
+    should_recognize_these_strings_as_normal_text(
+      "abc", "/abc", "<2abc>", "</2abc>", "<//abc>", "< abc>", "</ abc>",
+      "<abc", "</abc", "abc>", "<", ">"
     )
 
   end
