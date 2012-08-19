@@ -15,10 +15,10 @@ describe AnsiChameleon::Tag do
 
   describe "after initialization" do
     context "without parameters" do
-      its(:name) { should be_nil }
-      its(:id) { should be_nil }
-      its(:class_names) { should == [] }
-      its(:parent) { should be_nil }
+      its(:name           ) { should be_nil }
+      its(:id             ) { should be_nil }
+      its(:class_names    ) { should == []  }
+      its(:parent         ) { should be_nil }
       its(:original_string) { should be_nil }
     end
 
@@ -77,7 +77,6 @@ describe AnsiChameleon::Tag do
       before { tag.name = :"tag-name" }
       it("should store the value as string") { tag.name.should == "tag-name" }
     end
-
   end
 
   describe "#id=" do
@@ -92,7 +91,6 @@ describe AnsiChameleon::Tag do
       before { tag.id = :"tagId" }
       it("should store the value as string") { tag.id.should == "tagId" }
     end
-
   end
 
   describe "#class_names=" do
@@ -107,7 +105,6 @@ describe AnsiChameleon::Tag do
       before { tag.class_names = [:"class_1", :"class_2"] }
       it("should store the values as strings") { tag.class_names.should == ["class_1", "class_2"] }
     end
-
   end
 
   describe "#==" do
