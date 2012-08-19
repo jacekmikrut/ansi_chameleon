@@ -6,6 +6,7 @@ module AnsiChameleon
     NAME_REG = NAME_FIRST_CHAR_REG + NAME_OTHER_CHARS_REG
 
     def initialize(attrs={})
+      self.closing         = attrs[:closing]
       self.name            = attrs[:name]
       self.id              = attrs[:id]
       self.class_names     = attrs[:class_names]
@@ -15,6 +16,15 @@ module AnsiChameleon
 
     attr_accessor :parent
     attr_reader :name, :id, :class_names, :original_string
+    attr_writer :closing
+
+    def closing?
+      @closing
+    end
+
+    def opening?
+      !closing?
+    end
 
     def name=(value)
       @name = value && value.to_s

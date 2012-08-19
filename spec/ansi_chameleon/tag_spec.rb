@@ -2,6 +2,9 @@ require "spec_helper"
 
 describe AnsiChameleon::Tag do
 
+  it { should respond_to(:closing=) }
+  it { should respond_to(:closing?) }
+  it { should respond_to(:opening?) }
   it { should respond_to(:name) }
   it { should respond_to(:name=) }
   it { should respond_to(:id) }
@@ -15,11 +18,20 @@ describe AnsiChameleon::Tag do
 
   describe "after initialization" do
     context "without parameters" do
+      its(:closing?       ) { should be_false }
+      its(:opening?       ) { should be_true }
       its(:name           ) { should be_nil }
       its(:id             ) { should be_nil }
       its(:class_names    ) { should == []  }
       its(:parent         ) { should be_nil }
       its(:original_string) { should be_nil }
+    end
+
+    context "with :closing value given" do
+      it "should use #closing= to assign it" do
+        described_class.any_instance.should_receive(:closing=).with(true).once
+        described_class.new(:closing => true)
+      end
     end
 
     context "with :name value given" do
@@ -56,6 +68,34 @@ describe AnsiChameleon::Tag do
       it "should use #original_string= to assign it" do
         described_class.any_instance.should_receive(:original_string=).with("<tag>").once
         described_class.new(:original_string => "<tag>")
+      end
+    end
+  end
+
+  describe "#closing=" do
+    subject(:tag)
+
+    context "when set to true" do
+      before { tag.closing = true }
+
+      describe "#closing?" do
+        it { tag.closing?.should be_true }
+      end
+
+      describe "#opening?" do
+        it { tag.opening?.should be_false }
+      end
+    end
+
+    context "when set to false" do
+      before { tag.closing = false }
+
+      describe "#closing?" do
+        it { tag.closing?.should be_false }
+      end
+
+      describe "#opening?" do
+        it { tag.opening?.should be_true }
       end
     end
   end
