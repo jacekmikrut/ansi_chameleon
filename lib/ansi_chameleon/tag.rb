@@ -2,10 +2,10 @@ module AnsiChameleon
   class Tag
 
     def initialize(attrs={})
-      self.name   = attrs[:name]
-      self.id     = attrs[:id]
-      self.class_names = attrs[:class_names]
-      self.parent = attrs[:parent]
+      self.name            = attrs[:name]
+      self.id              = attrs[:id]
+      self.class_names     = attrs[:class_names]
+      self.parent          = attrs[:parent]
       self.original_string = attrs[:original_string]
     end
 
@@ -26,7 +26,11 @@ module AnsiChameleon
 
     def ==(other)
       return false if other.nil?
-      name == other.name && id == other.id && class_names.sort == other.class_names.sort && parent == other.parent
+
+                  name == other.name &&
+                    id == other.id &&
+      class_names.sort == other.class_names.sort &&
+                parent == other.parent
     end
 
     private
