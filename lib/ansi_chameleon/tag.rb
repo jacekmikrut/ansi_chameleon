@@ -4,12 +4,13 @@ module AnsiChameleon
     def initialize(attrs={})
       self.name   = attrs[:name]
       self.id     = attrs[:id]
+      self.class_names = attrs[:class_names]
       self.parent = attrs[:parent]
       self.original_string = attrs[:original_string]
     end
 
     attr_accessor :parent
-    attr_reader :name, :id, :original_string
+    attr_reader :name, :id, :class_names, :original_string
 
     def name=(value)
       @name = value && value.to_s
@@ -19,9 +20,13 @@ module AnsiChameleon
       @id = value && value.to_s
     end
 
+    def class_names=(array)
+      @class_names = array && array.map(&:to_s) || []
+    end
+
     def ==(other)
       return false if other.nil?
-      name == other.name && id == other.id && parent == other.parent
+      name == other.name && id == other.id && class_names.sort == other.class_names.sort && parent == other.parent
     end
 
     private
