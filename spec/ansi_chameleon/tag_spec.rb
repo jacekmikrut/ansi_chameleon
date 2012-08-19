@@ -4,6 +4,8 @@ describe AnsiChameleon::Tag do
 
   it { should respond_to(:name) }
   it { should respond_to(:name=) }
+  it { should respond_to(:id) }
+  it { should respond_to(:id=) }
   it { should respond_to(:parent) }
   it { should respond_to(:parent=) }
   it { should respond_to(:original_string) }
@@ -12,6 +14,7 @@ describe AnsiChameleon::Tag do
   describe "after initialization" do
     context "without parameters" do
       its(:name) { should be_nil }
+      its(:id) { should be_nil }
       its(:parent) { should be_nil }
       its(:original_string) { should be_nil }
     end
@@ -24,6 +27,16 @@ describe AnsiChameleon::Tag do
     context "with :name value given as symbol" do
       subject(:tag) { described_class.new(:name => :"tag-name") }
       it("should have that value set as string") { tag.name.should == "tag-name" }
+    end
+
+    context "with :id value given as string" do
+      subject(:tag) { described_class.new(:id => "tagId") }
+      it("should have that value set as string") { tag.id.should == "tagId" }
+    end
+
+    context "with :id value given as symbol" do
+      subject(:tag) { described_class.new(:id => :"tagId") }
+      it("should have that value set as string") { tag.id.should == "tagId" }
     end
 
     context "with :parent value" do
@@ -54,17 +67,37 @@ describe AnsiChameleon::Tag do
 
   end
 
+  describe "#id=" do
+    subject(:tag)
+
+    context "when called with a string" do
+      before { tag.id = "tagId" }
+      it("should store the value as string") { tag.id.should == "tagId" }
+    end
+
+    context "when called with a symbol" do
+      before { tag.id = :"tagId" }
+      it("should store the value as string") { tag.id.should == "tagId" }
+    end
+
+  end
+
   describe "#==" do
-    subject(:tag   ) { described_class.new(:name => "name", :parent => parent) }
-        let(:other ) { described_class.new(:name => "name", :parent => parent) }
+    subject(:tag   ) { described_class.new(:name => "name", :id => "id", :parent => parent) }
+        let(:other ) { described_class.new(:name => "name", :id => "id", :parent => parent) }
         let(:parent) { stub(:parent) }
 
-    context "when tags have the same names and parents" do
+    context "when tags have the same names, ids and parents" do
       it { expect(tag == other).to be_true }
     end
 
     context "when tag names are different" do
       before { other.name = "different name" }
+      it { expect(tag == other).to be_false }
+    end
+
+    context "when tag ids are different" do
+      before { other.id = "differentId" }
       it { expect(tag == other).to be_false }
     end
 
