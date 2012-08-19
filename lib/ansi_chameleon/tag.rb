@@ -25,8 +25,7 @@ module AnsiChameleon
     end
 
     def ==(other)
-      return false if other.nil?
-
+                         !other.nil? &&
                   name == other.name &&
                     id == other.id &&
       class_names.sort == other.class_names.sort &&
