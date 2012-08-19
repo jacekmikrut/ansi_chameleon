@@ -22,46 +22,41 @@ describe AnsiChameleon::Tag do
       its(:original_string) { should be_nil }
     end
 
-    context "with :name value given as string" do
-      subject(:tag) { described_class.new(:name => "tag-name") }
-      it("should have that value set as string") { tag.name.should == "tag-name" }
+    context "with :name value given" do
+      it "should use #name= to assign it" do
+        described_class.any_instance.should_receive(:name=).with("tag-name").once
+        described_class.new(:name => "tag-name")
+      end
     end
 
-    context "with :name value given as symbol" do
-      subject(:tag) { described_class.new(:name => :"tag-name") }
-      it("should have that value set as string") { tag.name.should == "tag-name" }
+    context "with :id value given" do
+      it "should use #id= to assign it" do
+        described_class.any_instance.should_receive(:id=).with("tagId").once
+        described_class.new(:id => "tagId")
+      end
     end
 
-    context "with :id value given as string" do
-      subject(:tag) { described_class.new(:id => "tagId") }
-      it("should have that value set as string") { tag.id.should == "tagId" }
+    context "with :class_names value given" do
+      it "should use #class_names= to assign it" do
+        described_class.any_instance.should_receive(:class_names=).with(["class_1", "class_2"]).once
+        described_class.new(:class_names => ["class_1", "class_2"])
+      end
     end
 
-    context "with :id value given as symbol" do
-      subject(:tag) { described_class.new(:id => :"tagId") }
-      it("should have that value set as string") { tag.id.should == "tagId" }
-    end
-
-    context "with :class_names values given as strings" do
-      subject(:tag) { described_class.new(:class_names => ["class_1", "class_2"]) }
-      it("should have that values set as strings") { tag.class_names.should == ["class_1", "class_2"] }
-    end
-
-    context "with :class_names values given as symbols" do
-      subject(:tag) { described_class.new(:class_names => [:"class_1", :"class_2"]) }
-      it("should have that values set as strings") { tag.class_names.should == ["class_1", "class_2"] }
-    end
-
-    context "with :parent value" do
-      subject(:tag) { described_class.new(:parent => parent) }
+    context "with :parent value given" do
       let(:parent) { stub(:parent) }
-      it("should have that value set") { tag.parent.should equal(parent) }
+
+      it "should use #parent= to assign it" do
+        described_class.any_instance.should_receive(:parent=).with(parent).once
+        described_class.new(:parent => parent)
+      end
     end
 
-    context "with :original_string value" do
-      subject(:tag) { described_class.new(:original_string => original_string) }
-      let(:original_string) { "<tag>" }
-      it("should have that value set") { tag.original_string.should equal(original_string) }
+    context "with :original_string value given" do
+      it "should use #original_string= to assign it" do
+        described_class.any_instance.should_receive(:original_string=).with("<tag>").once
+        described_class.new(:original_string => "<tag>")
+      end
     end
   end
 
