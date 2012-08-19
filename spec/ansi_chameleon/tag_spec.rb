@@ -7,7 +7,7 @@ describe AnsiChameleon::Tag do
   it { should respond_to(:parent) }
   it { should respond_to(:parent=) }
   it { should respond_to(:original_string) }
-  it { should respond_to(:original_string=) }
+  it { should_not respond_to(:original_string=) }
 
   describe "after initialization" do
     context "without parameters" do

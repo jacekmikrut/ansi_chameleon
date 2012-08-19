@@ -7,8 +7,8 @@ module AnsiChameleon
       self.original_string = attrs[:original_string]
     end
 
-    attr_accessor :parent, :original_string
-    attr_reader :name
+    attr_accessor :parent
+    attr_reader :name, :original_string
 
     def name=(value)
       @name = value && value.to_s
@@ -18,5 +18,10 @@ module AnsiChameleon
       return false if other.nil?
       name == other.name && parent == other.parent
     end
+
+    private
+
+    attr_writer :original_string
+
   end
 end
