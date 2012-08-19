@@ -1,6 +1,10 @@
 module AnsiChameleon
   class Tag
 
+    NAME_FIRST_CHAR_REG = "[_a-zA-Z]"
+    NAME_OTHER_CHARS_REG = "\\w*"
+    NAME_REG = NAME_FIRST_CHAR_REG + NAME_OTHER_CHARS_REG
+
     def initialize(attrs={})
       self.name            = attrs[:name]
       self.id              = attrs[:id]
