@@ -180,4 +180,96 @@ describe AnsiChameleon::Tag do
       it { expect(tag == nil).to be_false }
     end
   end
+
+  describe ".parse" do
+    subject { described_class.parse(string) }
+
+    context "for an empty string" do
+      let(:string) { "" }
+      it { should be_nil }
+    end
+
+    context "for a blank string" do
+      let(:string) { "  " }
+      it { should be_nil }
+    end
+
+    context "for an ordinary text" do
+      let(:string) { "An ordinary text." }
+      it { should be_nil }
+    end
+
+    context "for an opening tag" do
+      let(:string) { "<tag>" }
+      it { should be_instance_of(described_class) }
+    end
+
+    context "for an closing tag" do
+      let(:string) { "</tag>" }
+      it { should be_instance_of(described_class) }
+    end
+  end
+
+  describe ".parse" do
+    subject { described_class.parse(string) }
+
+    context %{for <tag>} do
+      let(:string) { %{<tag>} }
+
+      its(:closing?       ) { should be_false }
+      its(:name           ) { should == "tag" }
+      its(:id             ) { should be_nil }
+      its(:class_names    ) { should be_empty }
+      its(:parent         ) { should be_nil }
+      its(:original_string) { should == "<tag>" }
+    end
+
+    context %{for </tag>} do
+      let(:string) { %{</tag>} }
+
+      its(:closing?       ) { should be_true }
+      its(:name           ) { should == "tag" }
+      its(:id             ) { should be_nil }
+      its(:class_names    ) { should be_empty }
+      its(:parent         ) { should be_nil }
+      its(:original_string) { should == "</tag>" }
+    end
+
+    context %{for attrs put into double quotes: <tag id="theId" class="class_1 class_2">} do
+      let(:string) { %{<tag id="theId" class="class_1 class_2">} }
+
+      its(:closing?       ) { should be_false }
+      its(:name           ) { should == "tag" }
+      its(:id             ) { should == "theId" }
+      its(:class_names    ) { should == ["class_1", "class_2"] }
+      its(:parent         ) { should be_nil }
+      its(:original_string) { should == %{<tag id="theId" class="class_1 class_2">} }
+    end
+
+    context %{for attrs put into single quotes: <tag id='theId' class='class_1 class_2'>} do
+      let(:string) { %{<tag id='theId' class='class_1 class_2'>} }
+
+      its(:closing?       ) { should be_false }
+      its(:name           ) { should == "tag" }
+      its(:id             ) { should == "theId" }
+      its(:class_names    ) { should == ["class_1", "class_2"] }
+      its(:parent         ) { should be_nil }
+      its(:original_string) { should == %{<tag id='theId' class='class_1 class_2'>} }
+    end
+
+    context %{for attrs in different order: <tag class="class_1 class_2" id="theId">} do
+      let(:string) { %{<tag class="class_1 class_2" id="theId">} }
+
+      its(:id             ) { should == "theId" }
+      its(:class_names    ) { should == ["class_1", "class_2"] }
+    end
+
+    context %{for other attrs present: <tag other="value" id="theId" yet-another="value" class="class_1 class_2">} do
+      let(:string) { %{<tag other="value" id="theId" yet-another="value" class="class_1 class_2">} }
+
+      its(:id             ) { should == "theId" }
+      its(:class_names    ) { should == ["class_1", "class_2"] }
+      its(:original_string) { should == %{<tag other="value" id="theId" yet-another="value" class="class_1 class_2">} }
+    end
+  end
 end

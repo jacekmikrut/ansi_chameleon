@@ -5,6 +5,21 @@ module AnsiChameleon
     NAME_OTHER_CHARS_REG = "\\w*"
     NAME_REG = NAME_FIRST_CHAR_REG + NAME_OTHER_CHARS_REG
 
+       ID_REG = %{id=(?<id_quote>["'])(?<id>(?:(?!\\g<id_quote>).)*)\\g<id_quote>}
+    CLASS_REG = %{class=(?<class_quote>["'])(?<class>(?:(?!\\g<class_quote>).)*)\\g<class_quote>}
+
+    def self.parse(string)
+      if m = string.match(/<(?<closing_char>\/)?(?<name>#{NAME_REG})(?:#{ID_REG}|#{CLASS_REG}|.)*>/)
+        new(
+          :closing         => !!m[:closing_char],
+          :name            => m[:name],
+          :id              => m[:id],
+          :class_names     => m[:class] && m[:class].scan(/\S+/),
+          :original_string => string
+        )
+      end
+    end
+
     def initialize(attrs={})
       self.closing         = attrs[:closing]
       self.name            = attrs[:name]
