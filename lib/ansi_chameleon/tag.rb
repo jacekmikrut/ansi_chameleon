@@ -9,7 +9,7 @@ module AnsiChameleon
     CLASS_REG = %{class=(?<class_quote>["'])(?<class>(?:(?!\\g<class_quote>).)*)\\g<class_quote>}
 
     def self.parse(string)
-      if m = string.match(/<(?<closing_char>\/)?(?<name>#{NAME_REG})(?:#{ID_REG}|#{CLASS_REG}|.)*>/)
+      if m = string.match(/\A<(?<closing_char>\/)?(?<name>#{NAME_REG})(?:#{ID_REG}|#{CLASS_REG}|.)*>\z/)
         new(
           :closing         => !!m[:closing_char],
           :name            => m[:name],
