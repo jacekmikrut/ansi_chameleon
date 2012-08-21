@@ -43,8 +43,8 @@ module AnsiChameleon
 
     def to_s
       if @stack.any?
-        tag_names = @stack.map { |data| "<#{data[:tag].name}>" }.join(', ')
-        msg_prefix = @stack.size == 1 ? "Tag #{tag_names} has" : "Tags #{tag_names} have"
+        tag_original_strings = @stack.map { |data| data[:tag].original_string }.join(', ')
+        msg_prefix = @stack.size == 1 ? "Tag #{tag_original_strings} has" : "Tags #{tag_original_strings} have"
         raise SyntaxError.new(msg_prefix + " been opened but not closed yet")
       end
 
