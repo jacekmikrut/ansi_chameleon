@@ -5,6 +5,10 @@ module AnsiChameleon
     OPENING_TAG_REGEX = /\A<#{Tag::NAME_REG}>\z/.freeze
     CLOSING_TAG_REGEX = /\A<\/#{Tag::NAME_REG}>\z/.freeze
 
+    def self.chunks(text)
+      text.scan(CHUNK_REGEX)
+    end
+
     def initialize(style_sheet)
       @style_sheet_handler = StyleSheetHandler.new(style_sheet, StylePropertyNameTranslator)
     end

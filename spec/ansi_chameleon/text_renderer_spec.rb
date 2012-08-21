@@ -194,4 +194,53 @@ describe AnsiChameleon::TextRenderer do
     )
 
   end
+
+  describe ".chunks" do
+    subject { described_class.chunks(text) }
+
+    context "for '' (empty text)" do
+      let(:text) { "" }
+      it { should == [] }
+    end
+
+    context "for 'This is some text' (text without tags)" do
+      let(:text) { "This is some text" }
+      it { should == ["This is some text"] }
+    end
+
+    context "for '  \tSome  text. \nSecond line.  \r  ' (text with multiple spaces, \\t, \\n and \\r characters)" do
+      let(:text) { "  \tSome  text. \nSecond line.  \r  " }
+      it { should == ["  \tSome  text. \nSecond line.  \r  "] }
+    end
+
+    context "for text with characters: d~`!@$%^&*()_+-='\";:,.?/{}[]|\\#" do
+      let(:text) { "~`!@$%^&*()_+-='\";:,.?/{}[]|\\#" }
+      it { should == ["~`!@$%^&*()_+-='\";:,.?/{}[]|\\#"] }
+    end
+
+    context "for 'Outside <tag> inside text </tag> outside.' (tags surrounded by whitespaces)" do
+      let(:text) { "Outside <tag> inside text </tag> outside." }
+      it { should == ["Outside ", "<tag>", " inside text ", "</tag>", " outside."] }
+    end
+
+    context "for 'Outside<tag>inside</tag>outside.' (tags immediately surrounded by text)" do
+      let(:text) { "Outside<tag>inside</tag>outside." }
+      it { should == ["Outside", "<tag>", "inside", "</tag>", "outside."] }
+    end
+
+    context "for '<tag>inside</tag>' (text that starts and ends with tags)" do
+      let(:text) { "<tag>inside</tag>" }
+      it { should == ["<tag>", "inside", "</tag>"] }
+    end
+
+    context "for 'Outside <tag></tag> outside.' (tags of empty content)" do
+      let(:text) { "Outside <tag></tag> outside." }
+      it { should == ["Outside ", "<tag>", "</tag>", " outside."] }
+    end
+
+    context "for 'Outside <tag1><tag2>inside</tag2>inside</tag1> outside.' (nested tags)" do
+      let(:text) { "Outside <tag1><tag2>inside</tag2>inside</tag1> outside." }
+      it { should == ["Outside ", "<tag1>", "<tag2>", "inside", "</tag2>", "inside", "</tag1>", " outside."] }
+    end
+  end
 end
