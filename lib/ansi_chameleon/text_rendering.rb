@@ -30,7 +30,7 @@ module AnsiChameleon
 
     def push_closing_tag(tag)
       unless @stack.last && @stack.last[:tag].name == tag.name
-        raise SyntaxError.new("Encountered </#{tag.name}> tag that had not been opened yet")
+        raise SyntaxError.new("Encountered #{tag.original_string} tag that had not been opened yet")
       end
 
       @current_style = @stack.pop[:outer_style]

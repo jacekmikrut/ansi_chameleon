@@ -180,7 +180,7 @@ describe AnsiChameleon::TextRendering do
     describe "when trying to push closing tag without pushing the opening one first" do
       it do
         lambda {
-          subject.push_closing_tag(stub(:tag, :name => 'tag'))
+          subject.push_closing_tag(stub(:tag, :name => 'tag', :original_string => '</tag>'))
         }.should raise_error(SyntaxError, "Encountered </tag> tag that had not been opened yet")
       end
     end
