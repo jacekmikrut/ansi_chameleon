@@ -6,6 +6,7 @@ require "ansi_chameleon/style_sheet_handler"
 require "ansi_chameleon/tag"
 require "ansi_chameleon/text_rendering"
 require "ansi_chameleon/text_rendering/stack"
+require "ansi_chameleon/text_rendering/syntax_validator"
 require "ansi_chameleon/text_renderer"
 
 module AnsiChameleon

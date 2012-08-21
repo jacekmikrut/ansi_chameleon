@@ -12,7 +12,7 @@ module AnsiChameleon
     end
 
     def render(text)
-      text_rendering = TextRendering.new(@style_sheet_handler)
+      text_rendering = new_text_rendering
 
       self.class.chunks(text).each do |chunk|
         if tag = Tag.parse(chunk)
@@ -26,6 +26,12 @@ module AnsiChameleon
       end
 
       text_rendering.to_s
+    end
+
+    private
+
+    def new_text_rendering
+      TextRendering.new(@style_sheet_handler).extend(TextRendering::SyntaxValidator)
     end
   end
 end

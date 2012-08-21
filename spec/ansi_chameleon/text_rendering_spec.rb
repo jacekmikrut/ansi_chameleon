@@ -176,39 +176,5 @@ describe AnsiChameleon::TextRendering do
           "#{sequence(:reset)}"
       end
     end
-
-    describe "when trying to push closing tag without pushing the opening one first" do
-      it do
-        lambda {
-          subject.push_closing_tag(stub(:tag, :name => 'tag', :original_string => '</tag>'))
-        }.should raise_error(SyntaxError, "Encountered </tag> tag that had not been opened yet")
-      end
-    end
-
-    describe "when calling #to_s while one tag has not been closed" do
-      before do
-        style_sheet_handler.stub(:value_for => :some_value)
-        subject.push_opening_tag(stub(:tag, :name => 'tag', :parent= => nil, :original_string => '<tag id="id" class="class">'))
-      end
-      it do
-        lambda {
-          subject.to_s
-        }.should raise_error(SyntaxError, 'Tag <tag id="id" class="class"> has been opened but not closed yet')
-      end
-    end
-
-    describe "when calling #to_s while more than one tag have not been closed" do
-      before do
-        style_sheet_handler.stub(:value_for => :some_value)
-        subject.push_opening_tag(stub(:tag_1, :name => "tag_1", :parent= => nil, :original_string => '<tag_1 id="id1">'))
-        subject.push_opening_tag(stub(:tag_2, :name => "tag_2", :parent= => nil, :original_string => '<tag_2 id="id2">'))
-      end
-      it do
-        lambda {
-          subject.to_s
-        }.should raise_error(SyntaxError, 'Tags <tag_1 id="id1">, <tag_2 id="id2"> have been opened but not closed yet')
-      end
-    end
   end
-
 end
