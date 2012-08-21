@@ -18,7 +18,7 @@ module AnsiChameleon
         if tag = Tag.parse(chunk)
           text_rendering.send(
             tag.opening? ? :push_opening_tag : :push_closing_tag,
-            tag.name
+            tag
           )
         else
           text_rendering.push_text(chunk)

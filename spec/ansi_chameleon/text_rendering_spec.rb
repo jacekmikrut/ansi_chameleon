@@ -81,27 +81,35 @@ describe AnsiChameleon::TextRendering do
 
     describe "for some text and non-nested tags pushed" do
       before do
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :effect_name          ).and_return(nil            )
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :foreground_color_name).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :background_color_name).and_return(:tag_a_bg_color)
+        tag_a_opening.should_receive(:parent=).with(nil)
+        tag_b_opening.should_receive(:parent=).with(nil)
 
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_b'), :effect_name          ).and_return(:tag_b_effect  )
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_b'), :foreground_color_name).and_return(:tag_b_fg_color)
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_b'), :background_color_name).and_return(:tag_b_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect_name          ).and_return(nil            )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color_name).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color_name).and_return(:tag_a_bg_color)
+
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect_name          ).and_return(:tag_b_effect  )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color_name).and_return(:tag_b_fg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color_name).and_return(:tag_b_bg_color)
 
         subject.push_text("First sentence. ")
 
-        subject.push_opening_tag("tag_a")
+        subject.push_opening_tag(tag_a_opening)
           subject.push_text("Text in tag_a.")
-        subject.push_closing_tag("tag_a")
+        subject.push_closing_tag(tag_a_closing)
 
-        subject.push_opening_tag("tag_b")
+        subject.push_opening_tag(tag_b_opening)
           subject.push_text("Text in ")
           subject.push_text("tag_b.")
-        subject.push_closing_tag("tag_b")
+        subject.push_closing_tag(tag_b_closing)
 
         subject.push_text(" Second sentence.")
       end
+
+      let(:tag_a_opening) { stub(:tag_a_opening, :name => "tag_a") }
+      let(:tag_a_closing) { stub(:tag_a_closing, :name => "tag_a") }
+      let(:tag_b_opening) { stub(:tag_b_opening, :name => "tag_b") }
+      let(:tag_b_closing) { stub(:tag_b_closing, :name => "tag_b") }
 
       it "should return rendered text" do
         subject.to_s.should ==
@@ -123,28 +131,36 @@ describe AnsiChameleon::TextRendering do
 
     describe "for some text and nested tags pushed" do
       before do
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :effect_name          ).and_return(nil            )
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :foreground_color_name).and_return(:tag_a_fg_color)
-        style_sheet_handler.should_receive(:value_for).with(tag('tag_a'), :background_color_name).and_return(:tag_a_bg_color)
+        tag_a_opening.should_receive(:parent=).with(nil)
+        tag_b_opening.should_receive(:parent=).with(tag_a_opening)
 
-        style_sheet_handler.should_receive(:value_for).with(tag(tag('tag_a'), 'tag_b'), :effect_name          ).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with(tag(tag('tag_a'), 'tag_b'), :foreground_color_name).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with(tag(tag('tag_a'), 'tag_b'), :background_color_name).and_return(:tag_b_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect_name          ).and_return(nil            )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color_name).and_return(:tag_a_fg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color_name).and_return(:tag_a_bg_color)
+
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect_name          ).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color_name).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color_name).and_return(:tag_b_bg_color)
 
         subject.push_text("First sentence. ")
 
-        subject.push_opening_tag("tag_a")
+        subject.push_opening_tag(tag_a_opening)
           subject.push_text("Text in tag_a.")
 
-          subject.push_opening_tag("tag_b")
+          subject.push_opening_tag(tag_b_opening)
             subject.push_text("Text in ")
             subject.push_text("tag_b.")
-          subject.push_closing_tag("tag_b")
+          subject.push_closing_tag(tag_b_closing)
 
-        subject.push_closing_tag("tag_a")
+        subject.push_closing_tag(tag_a_closing)
 
         subject.push_text(" Second sentence.")
       end
+
+      let(:tag_a_opening) { stub(:tag_a_opening, :name => "tag_a") }
+      let(:tag_a_closing) { stub(:tag_a_closing, :name => "tag_a") }
+      let(:tag_b_opening) { stub(:tag_b_opening, :name => "tag_b") }
+      let(:tag_b_closing) { stub(:tag_b_closing, :name => "tag_b") }
 
       it "should return rendered text" do
         subject.to_s.should ==
@@ -168,7 +184,7 @@ describe AnsiChameleon::TextRendering do
     describe "when trying to push closing tag without pushing the opening one first" do
       it do
         lambda {
-          subject.push_closing_tag('tag')
+          subject.push_closing_tag(stub(:tag, :name => 'tag'))
         }.should raise_error(SyntaxError, "Encountered </tag> tag that had not been opened yet")
       end
     end
@@ -176,7 +192,7 @@ describe AnsiChameleon::TextRendering do
     describe "when calling #to_s while one tag has not been closed" do
       before do
         style_sheet_handler.stub(:value_for => :some_value)
-        subject.push_opening_tag('tag')
+        subject.push_opening_tag(stub(:tag, :name => 'tag', :parent= => nil))
       end
       it do
         lambda {
@@ -188,8 +204,8 @@ describe AnsiChameleon::TextRendering do
     describe "when calling #to_s while more than one tag have not been closed" do
       before do
         style_sheet_handler.stub(:value_for => :some_value)
-        subject.push_opening_tag('tag_1')
-        subject.push_opening_tag('tag_2')
+        subject.push_opening_tag(stub(:tag_1, :name => "tag_1", :parent= => nil))
+        subject.push_opening_tag(stub(:tag_2, :name => "tag_2", :parent= => nil))
       end
       it do
         lambda {

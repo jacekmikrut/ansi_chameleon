@@ -47,9 +47,9 @@ describe AnsiChameleon::TextRenderer do
       AnsiChameleon::Tag.stub(:parse).with("</tag>").and_return(closing_tag = stub(:closing_tag, :name => "tag", :opening? => false))
 
       text_rendering.should_receive(:push_text       ).with("text1").once.ordered
-      text_rendering.should_receive(:push_opening_tag).with("tag"  ).once.ordered
+      text_rendering.should_receive(:push_opening_tag).with(opening_tag).once.ordered
       text_rendering.should_receive(:push_text       ).with("text2").once.ordered
-      text_rendering.should_receive(:push_closing_tag).with("tag"  ).once.ordered
+      text_rendering.should_receive(:push_closing_tag).with(closing_tag).once.ordered
 
       subject.render(text)
     end

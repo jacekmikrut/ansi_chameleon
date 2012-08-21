@@ -18,9 +18,9 @@ module AnsiChameleon
       @rendered_text << sequence_for(@current_style)
     end
 
-    def push_opening_tag(tag_name)
+    def push_opening_tag(tag)
       @stack.push({
-        :tag => Tag.new(:name => tag_name.to_s, :parent => @stack.last && @stack.last[:tag]),
+        :tag => tag.tap { |t| t.parent = @stack.last && @stack.last[:tag] },
         :outer_style => @current_style
       })
 
@@ -28,9 +28,9 @@ module AnsiChameleon
       @rendered_text << sequence_for(@current_style)
     end
 
-    def push_closing_tag(tag_name)
-      unless @stack.last && @stack.last[:tag].name == tag_name.to_s
-        raise SyntaxError.new("Encountered </#{tag_name}> tag that had not been opened yet")
+    def push_closing_tag(tag)
+      unless @stack.last && @stack.last[:tag].name == tag.name
+        raise SyntaxError.new("Encountered </#{tag.name}> tag that had not been opened yet")
       end
 
       @current_style = @stack.pop[:outer_style]
