@@ -2,35 +2,6 @@ require "spec_helper"
 
 describe AnsiChameleon::TextRenderer do
 
-  def self.should_recognize_these_strings_as_opening_tags(*items)
-    items.each do |item|
-      it "should recognize #{item.inspect} as opening tag" do
-        text_rendering.should_receive(:push_opening_tag).with(item[1..-2])
-        subject.render(item)
-      end
-    end
-  end
-
-  def self.should_recognize_these_strings_as_closing_tags(*items)
-    items.each do |item|
-      it "should recognize #{item.inspect} as closing tag" do
-        text_rendering.should_receive(:push_closing_tag).with(item[2..-2])
-        subject.render(item)
-      end
-    end
-  end
-
-  def self.should_recognize_these_strings_as_normal_text(*items)
-    items.each do |item|
-      it "should recognize #{item.inspect} as normal text" do
-        text_rendering.should_not_receive(:push_opening_tag)
-        text_rendering.should_not_receive(:push_closing_tag)
-        text_rendering.should_receive(:push_text).with(item)
-        subject.render(item)
-      end
-    end
-  end
-
   let(:style_sheet_handler) { stub(:style_sheet_handler) }
 
   describe "each instance" do
@@ -177,22 +148,6 @@ describe AnsiChameleon::TextRenderer do
         subject.render(text)
       end
     end
-
-    should_recognize_these_strings_as_opening_tags(
-      "<abc>", "<ABC>", "<a12345>", "<a>", "<A>",
-      "<a_b_c>", "<_abc>", "<abc_>", "<_>"
-    )
-
-    should_recognize_these_strings_as_closing_tags(
-      "</abc>", "</ABC>", "</a12345>", "</a>", "</A>",
-      "</a_b_c>", "</_abc>", "</abc_>", "</_>"
-    )
-
-    should_recognize_these_strings_as_normal_text(
-      "abc", "/abc", "<2abc>", "</2abc>", "<//abc>", "< abc>", "</ abc>",
-      "<abc", "</abc", "abc>", "<", ">"
-    )
-
   end
 
   describe ".chunks" do
