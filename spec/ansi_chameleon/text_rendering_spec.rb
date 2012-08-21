@@ -6,10 +6,6 @@ describe AnsiChameleon::TextRendering do
     "[SEQUENCE:#{effect_name}:#{foreground_color_name}:#{background_color_name}]"
   end
 
-  def tag(parent=nil, name)
-    AnsiChameleon::Tag.new(:name => name, :parent => parent)
-  end
-
   let(:style_sheet_handler) { stub(:style_sheet_handler, :value_for => nil) }
   subject { AnsiChameleon::TextRendering.new(style_sheet_handler) }
 
