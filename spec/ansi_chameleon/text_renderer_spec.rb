@@ -20,133 +20,43 @@ describe AnsiChameleon::TextRenderer do
 
   describe "#render" do
     before { AnsiChameleon::StyleSheetHandler.stub(:new => style_sheet_handler) }
-    subject { AnsiChameleon::TextRenderer.new(stub(:style_sheet)) }
+    subject { described_class.new(stub(:style_sheet)) }
     before { AnsiChameleon::TextRendering.stub(:new => text_rendering) }
     let(:text_rendering) { stub(:text_rendering, :to_s => rendered_text) }
+    before { described_class.stub(:chunks => []) }
     let(:rendered_text) { stub(:rendered_text) }
+    let(:text) { stub(:text) }
 
     it "should create AnsiChameleon::TextRendering with the style sheet handler for every call" do
       AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).exactly(3).times.and_return(text_rendering)
-      subject.render("")
-      subject.render("")
-      subject.render("")
+      subject.render(text)
+      subject.render(text)
+      subject.render(text)
+    end
+
+    it "should call AnsiChameleon::TextRenderer.chunks to get the chunks" do
+      described_class.should_receive(:chunks).with(text).and_return([])
+      subject.render(text)
+    end
+
+    it "should call proper text_rendering methods for each chunk" do
+      described_class.stub(:chunks => ["text1", "<tag>", "text2", "</tag>"])
+      AnsiChameleon::Tag.stub(:parse).with("text1" ).and_return(nil)
+      AnsiChameleon::Tag.stub(:parse).with("<tag>" ).and_return(opening_tag = stub(:opening_tag, :name => "tag", :opening? => true))
+      AnsiChameleon::Tag.stub(:parse).with("text2" ).and_return(nil)
+      AnsiChameleon::Tag.stub(:parse).with("</tag>").and_return(closing_tag = stub(:closing_tag, :name => "tag", :opening? => false))
+
+      text_rendering.should_receive(:push_text       ).with("text1").once.ordered
+      text_rendering.should_receive(:push_opening_tag).with("tag"  ).once.ordered
+      text_rendering.should_receive(:push_text       ).with("text2").once.ordered
+      text_rendering.should_receive(:push_closing_tag).with("tag"  ).once.ordered
+
+      subject.render(text)
     end
 
     it "should return the value obtained from the text_rendering#to_s" do
       text_rendering.should_receive(:to_s).once.and_return(rendered_text)
-      subject.render("").should == rendered_text
-    end
-
-    context "for empty text" do
-      let(:text) { "" }
-
-      it "should not push anything to text_rendering object" do
-        text_rendering.should_not_receive(:push_text)
-        text_rendering.should_not_receive(:push_opening_tag)
-        text_rendering.should_not_receive(:push_closing_tag)
-
-        subject.render(text)
-      end
-    end
-
-    context "for text without tags" do
-      let(:text) { "This is some text." }
-
-      it "should push one text chunk and no tags to text_rendering object" do
-        text_rendering.should_receive(:push_text).with("This is some text.")
-
-        subject.render(text)
-      end
-    end
-
-    context "for text with multiple spaces, \\t, \\n and \\r characters" do
-      let(:text) { "  \tSome  text. \nSecond line.  \r  " }
-
-      it "should push one text chunk to text_rendering object" do
-        text_rendering.should_receive(:push_text).with("  \tSome  text. \nSecond line.  \r  ")
-
-        subject.render(text)
-      end
-    end
-
-    context "for text with characters: ~`!@$%^&*()_+-='\";:,.?/{}[]|\#" do
-      let(:text) { "~`!@$%^&*()_+-='\";:,.?/{}[]|\#" }
-
-      it "should push one text chunk to text_rendering object" do
-        text_rendering.should_receive(:push_text).with("~`!@$%^&*()_+-='\";:,.?/{}[]|\#" )
-
-        subject.render(text)
-      end
-    end
-
-    context "for text with tags surrounded by whitespaces" do
-      let(:text) { "Outside <tag> inside text </tag> outside." }
-
-      it "should push proper text and tag chunks" do
-        text_rendering.should_receive(:push_text       ).with("Outside "     ).ordered
-        text_rendering.should_receive(:push_opening_tag).with("tag"          ).ordered
-        text_rendering.should_receive(:push_text       ).with(" inside text ").ordered
-        text_rendering.should_receive(:push_closing_tag).with("tag"          ).ordered
-        text_rendering.should_receive(:push_text       ).with(" outside."    ).ordered
-
-        subject.render(text)
-      end
-    end
-
-    context "for text with tags surrounded immediately by text" do
-      let(:text) { "Outside<tag>inside</tag>outside." }
-
-      it "should push proper text and tag chunks" do
-        text_rendering.should_receive(:push_text       ).with("Outside" ).ordered
-        text_rendering.should_receive(:push_opening_tag).with("tag"     ).ordered
-        text_rendering.should_receive(:push_text       ).with("inside"  ).ordered
-        text_rendering.should_receive(:push_closing_tag).with("tag"     ).ordered
-        text_rendering.should_receive(:push_text       ).with("outside.").ordered
-
-        subject.render(text)
-      end
-    end
-
-    context "for text that starts and ends with tags" do
-      let(:text) { "<tag>inside</tag>" }
-
-      it "should push proper text and tag chunks" do
-        text_rendering.should_receive(:push_opening_tag).with("tag"      ).ordered
-        text_rendering.should_receive(:push_text       ).with("inside"   ).ordered
-        text_rendering.should_receive(:push_closing_tag).with("tag"      ).ordered
-
-        subject.render(text)
-      end
-    end
-
-    context "for text with tags of empty content" do
-      let(:text) { "Outside <tag></tag> outside." }
-
-      it "should push proper text and tag chunks" do
-        text_rendering.should_receive(:push_text       ).with("Outside " ).ordered
-        text_rendering.should_receive(:push_opening_tag).with("tag"      ).ordered
-        text_rendering.should_receive(:push_closing_tag).with("tag"      ).ordered
-        text_rendering.should_receive(:push_text       ).with(" outside.").ordered
-
-        subject.render(text)
-      end
-    end
-
-    context "for text with nested tags" do
-      let(:text) { "Outside <tag1><tag2>inside</tag2>inside</tag1> outside." }
-
-      it "should push proper text and tag chunks" do
-        text_rendering.should_receive(:push_text       ).with("Outside " ).ordered
-        text_rendering.should_receive(:push_opening_tag).with("tag1"     ).ordered
-        text_rendering.should_receive(:push_opening_tag).with("tag2"     ).ordered
-        text_rendering.should_receive(:push_text       ).with("inside"   ).ordered
-        text_rendering.should_receive(:push_closing_tag).with("tag2"     ).ordered
-        text_rendering.should_receive(:push_text       ).with("inside"   ).ordered
-        text_rendering.should_receive(:push_closing_tag).with("tag1"     ).ordered
-        text_rendering.should_receive(:push_text       ).with(" outside.").ordered
-
-        subject.render(text)
-      end
+      subject.render(text).should == rendered_text
     end
   end
 
