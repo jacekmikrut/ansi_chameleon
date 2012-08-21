@@ -184,18 +184,73 @@ describe AnsiChameleon::Tag do
   describe ".parse" do
     subject { described_class.parse(string) }
 
-    context "for an empty string" do
+    context "for '' (empty string)" do
       let(:string) { "" }
       it { should be_nil }
     end
 
-    context "for a blank string" do
+    context "for '  ' (blank string)" do
       let(:string) { "  " }
       it { should be_nil }
     end
 
-    context "for an ordinary text" do
+    context "for 'An ordinary text.'" do
       let(:string) { "An ordinary text." }
+      it { should be_nil }
+    end
+
+    context "for '/abc'" do
+      let(:string) { "/abc" }
+      it { should be_nil }
+    end
+
+    context "for '<2abc>'" do
+      let(:string) { "<2abc>" }
+      it { should be_nil }
+    end
+
+    context "for '</2abc>'" do
+      let(:string) { "</2abc>" }
+      it { should be_nil }
+    end
+
+    context "for '<//abc>'" do
+      let(:string) { "<//abc>" }
+      it { should be_nil }
+    end
+
+    context "for '< abc>'" do
+      let(:string) { "< abc>" }
+      it { should be_nil }
+    end
+
+    context "for '</ abc>'" do
+      let(:string) { "</ abc>" }
+      it { should be_nil }
+    end
+
+    context "for '<abc'" do
+      let(:string) { "<abc" }
+      it { should be_nil }
+    end
+
+    context "for '</abc'" do
+      let(:string) { "</abc" }
+      it { should be_nil }
+    end
+
+    context "for 'abc>'" do
+      let(:string) { "abc>" }
+      it { should be_nil }
+    end
+
+    context "for '<'" do
+      let(:string) { "<" }
+      it { should be_nil }
+    end
+
+    context "for '>'" do
+      let(:string) { ">" }
       it { should be_nil }
     end
 
@@ -233,6 +288,102 @@ describe AnsiChameleon::Tag do
       its(:class_names    ) { should be_empty }
       its(:parent         ) { should be_nil }
       its(:original_string) { should == "</tag>" }
+    end
+
+    context %{for '<TAG>'} do
+      let(:string) { %{<TAG>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</TAG>'} do
+      let(:string) { %{</TAG>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<a12345>'} do
+      let(:string) { %{<a12345>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</a12345>'} do
+      let(:string) { %{</a12345>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<a>'} do
+      let(:string) { %{<a>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</a>'} do
+      let(:string) { %{</a>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<A>'} do
+      let(:string) { %{<A>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</A>'} do
+      let(:string) { %{</A>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<a_b_c>'} do
+      let(:string) { %{<a_b_c>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</a_b_c>'} do
+      let(:string) { %{</a_b_c>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<_abc>'} do
+      let(:string) { %{<_abc>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</_abc>'} do
+      let(:string) { %{</_abc>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<abc_>'} do
+      let(:string) { %{<abc_>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</abc_>'} do
+      let(:string) { %{</abc_>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
+    end
+
+    context %{for '<_>'} do
+      let(:string) { %{<_>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_false }
+    end
+
+    context %{for '</_>'} do
+      let(:string) { %{</_>} }
+      it { should be_instance_of(described_class) }
+      its(:closing?) { should be_true }
     end
 
     context %{for attrs put into double quotes: <tag id="theId" class="class_1 class_2">} do
