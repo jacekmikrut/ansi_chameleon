@@ -16,7 +16,7 @@ module AnsiChameleon
     def render(text)
       text_rendering = TextRendering.new(@style_sheet_handler)
 
-      chunks(text).each do |chunk|
+      self.class.chunks(text).each do |chunk|
         case
         when opening_tag?(chunk)
           text_rendering.push_opening_tag(tag_name(chunk))
@@ -34,10 +34,6 @@ module AnsiChameleon
     end
 
     private
-
-    def chunks(text)
-      text.scan(CHUNK_REGEX)
-    end
 
     def opening_tag?(chunk)
       chunk =~ OPENING_TAG_REGEX
