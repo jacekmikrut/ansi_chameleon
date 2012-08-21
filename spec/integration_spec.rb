@@ -23,3 +23,20 @@ describe 'Multiple use' do
     .should == "\e[0m\e[37m\e[40mNow, there is only \e[0m\e[34m\e[40m1\e[0m\e[37m\e[40m orange.\e[0m"
   end
 end
+
+describe 'Text with a syntax error:' do
+
+  context 'lack of the closing tag' do
+    it do
+      lambda { AnsiChameleon.render('There are <number>3 oranges on the table.', {}) }
+      .should raise_error(SyntaxError, 'Tag <number> has been opened but not closed yet')
+    end
+  end
+
+  context 'trying to close a tag that has not been opened' do
+    it do
+      lambda { AnsiChameleon.render('There are <number>3</amount> oranges on the table.', {}) }
+      .should raise_error(SyntaxError, 'Encountered </amount> tag that had not been opened yet')
+    end
+  end
+end
