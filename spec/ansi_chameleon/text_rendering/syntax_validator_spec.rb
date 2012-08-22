@@ -13,7 +13,7 @@ describe "AnsiChameleon::TextRendering instance" do
     before { AnsiChameleon::SequenceGenerator.stub(:generate => "sequence") }
 
     describe "#push_closing_tag" do
-      describe "when trying to push closing tag without pushing the opening one first" do
+      context "if the opening tag hasn't been pushed" do
         it do
           lambda { text_rendering.push_closing_tag(stub(:tag, :name => 'tag', :original_string => '</tag>')) }
           .should raise_error(SyntaxError, "Encountered </tag> tag that had not been opened yet")
@@ -22,7 +22,7 @@ describe "AnsiChameleon::TextRendering instance" do
     end
 
     describe "#to_s" do
-      describe "when calling #to_s while one tag has not been closed" do
+      context "when one tag has not been closed yet" do
         before do
           text_rendering.push_opening_tag(stub(:tag, :name => 'tag', :parent= => nil, :original_string => '<tag id="id" class="class">'))
         end
@@ -33,7 +33,7 @@ describe "AnsiChameleon::TextRendering instance" do
         end
       end
 
-      describe "when calling #to_s while more than one tag have not been closed" do
+      context "when more than one tag have not been closed yet" do
         before do
           text_rendering.push_opening_tag(stub(:tag_1, :name => "tag_1", :parent= => nil, :original_string => '<tag_1 id="id1">'))
           text_rendering.push_opening_tag(stub(:tag_2, :name => "tag_2", :parent= => nil, :original_string => '<tag_2 id="id2">'))
