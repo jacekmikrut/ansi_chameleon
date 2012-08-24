@@ -2,9 +2,9 @@ module AnsiChameleon
   class TextRendering
 
     DEFAULT_STYLE = {
-      :effect_name           => :none,
-      :foreground_color_name => :white,
-      :background_color_name => :black
+      :effect           => :none,
+      :foreground_color => :white,
+      :background_color => :black
     }.freeze
 
     def initialize(style_sheet_handler)
@@ -42,9 +42,9 @@ module AnsiChameleon
 
     def sequence_for(style)
       AnsiChameleon::SequenceGenerator.generate(
-        style[:effect_name],
-        style[:foreground_color_name],
-        style[:background_color_name]
+        style[:effect],
+        style[:foreground_color],
+        style[:background_color]
       )
     end
 

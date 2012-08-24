@@ -24,9 +24,9 @@ describe AnsiChameleon::TextRendering do
     describe "when the style sheet handler doesn't have any default values" do
 
       it "should start with the sequence for #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect} values" do
-        effect_name           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect_name]
-        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color_name]
-        background_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:background_color_name]
+        effect_name           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect]
+        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
+        background_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:background_color]
 
         subject.to_s.should be_start_with(sequence(effect_name, foreground_color_name, background_color_name))
       end
@@ -34,12 +34,12 @@ describe AnsiChameleon::TextRendering do
 
     describe "when the style sheet handler has some default values" do
       before do
-        style_sheet_handler.stub(:value_for).with(nil, :effect_name          ).and_return(:bright)
-        style_sheet_handler.stub(:value_for).with(nil, :background_color_name).and_return(:blue)
+        style_sheet_handler.stub(:value_for).with(nil, :effect          ).and_return(:bright)
+        style_sheet_handler.stub(:value_for).with(nil, :background_color).and_return(:blue)
       end
 
       it "should start with the sequence for given default values and for missing ones should use #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect}" do
-        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color_name]
+        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
 
         subject.to_s.should be_start_with(sequence(:bright, foreground_color_name, :blue))
       end
@@ -48,9 +48,9 @@ describe AnsiChameleon::TextRendering do
 
   describe "usage scenarios" do
     before do
-      style_sheet_handler.stub(:value_for).with(nil, :effect_name          ).and_return(:default_effect)
-      style_sheet_handler.stub(:value_for).with(nil, :foreground_color_name).and_return(:default_fg_color)
-      style_sheet_handler.stub(:value_for).with(nil, :background_color_name).and_return(:default_bg_color)
+      style_sheet_handler.stub(:value_for).with(nil, :effect          ).and_return(:default_effect)
+      style_sheet_handler.stub(:value_for).with(nil, :foreground_color).and_return(:default_fg_color)
+      style_sheet_handler.stub(:value_for).with(nil, :background_color).and_return(:default_bg_color)
     end
 
     describe "for nothing pushed" do
@@ -80,13 +80,13 @@ describe AnsiChameleon::TextRendering do
         tag_a_opening.should_receive(:parent=).with(nil)
         tag_b_opening.should_receive(:parent=).with(nil)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect_name          ).and_return(nil            )
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color_name).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color_name).and_return(:tag_a_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect          ).and_return(nil            )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color).and_return(:tag_a_bg_color)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect_name          ).and_return(:tag_b_effect  )
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color_name).and_return(:tag_b_fg_color)
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color_name).and_return(:tag_b_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect          ).and_return(:tag_b_effect  )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color).and_return(:tag_b_fg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color).and_return(:tag_b_bg_color)
 
         subject.push_text("First sentence. ")
 
@@ -130,13 +130,13 @@ describe AnsiChameleon::TextRendering do
         tag_a_opening.should_receive(:parent=).with(nil)
         tag_b_opening.should_receive(:parent=).with(tag_a_opening)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect_name          ).and_return(nil            )
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color_name).and_return(:tag_a_fg_color)
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color_name).and_return(:tag_a_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect          ).and_return(nil            )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color).and_return(:tag_a_fg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color).and_return(:tag_a_bg_color)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect_name          ).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color_name).and_return(:inherit       )
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color_name).and_return(:tag_b_bg_color)
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect          ).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color).and_return(:inherit       )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color).and_return(:tag_b_bg_color)
 
         subject.push_text("First sentence. ")
 
