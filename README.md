@@ -1,12 +1,12 @@
-AnsiChameleon
-=============
+ansi_chameleon
+==============
 
-AnsiChameleon is a Ruby Gem that **colorizes text terminal output** by converting custom HTML-like tags into color ANSI escape sequences.
+ansi_chameleon is a Ruby Gem that **colorizes text terminal output** by converting custom HTML-like tags into color ANSI escape sequences.
 
 Installation
 ------------
 
-As a Ruby Gem, AnsiChameleon can be installed either by running
+As a Ruby Gem, ansi_chameleon can be installed either by running
 
 ```bash
   gem install ansi_chameleon
@@ -30,7 +30,7 @@ For **single use**:
 
   puts AnsiChameleon.render(
     "There are <number>3</number> oranges on the table.",
-    :number => { :fg_color => :blue }
+    "number" => { :fg_color => :blue }
   )
 ```
 
@@ -39,7 +39,7 @@ For **multiple use** this is more efficient:
 ```ruby
   require "ansi_chameleon"
 
-  text_renderer = AnsiChameleon::TextRenderer.new(:number => { :fg_color => :blue })
+  text_renderer = AnsiChameleon::TextRenderer.new("number" => { :fg_color => :blue })
 
   puts text_renderer.render("There are <number>2</number> oranges on the table.")
   puts text_renderer.render("Now, there is only <number>1</number> orange.")
@@ -52,13 +52,11 @@ In order to produce a colorized output AnsiChameleon needs a **text** and a **st
 
 ### Text
 
-Text to colorize is expected to include HTML-like tags of custom names, that will then be converted according to the rules defined in provided style sheet.
-
-Tags not included in the style sheet but found in the text being rendered are put to the output without modification.
+Text to colorize is expected to include HTML-like tags (of custom names and optional "id" and "class" attributes), that will then be converted according to the rules defined in provided style sheet.
 
 ### Style sheet
 
-A style sheet is simply a CSS-like Hash structure with keys that correspond to custom tag names and property names:
+A style sheet is simply a CSS-like Hash structure with keys that correspond to CSS-like selectors or property names:
 
 ```ruby
   style_sheet = {
@@ -66,16 +64,16 @@ A style sheet is simply a CSS-like Hash structure with keys that correspond to c
     :fg_color => :green,
     :bg_color => :black,
 
-    :number => {
+    "number" => {
       # style declarations for <number> tag
       :fg_color => :blue,
     },
-    :message => {
+    "message" => {
       # style declarations for <message> tag
       :fg_color => :red,
       :bg_color => :white,
 
-      :number => {
+      "number" => {
         # style declarations for <number> tag nested in <message> tag
         :fg_color => :inherit
       }
@@ -83,7 +81,7 @@ A style sheet is simply a CSS-like Hash structure with keys that correspond to c
   }
 ```
 
-Tag names in a style sheet can be written as either :symbols or "strings".
+More information can be found in the description of [simple_style_sheet](https://github.com/jacekmikrut/simple_style_sheet) Ruby Gem.
 
 #### Properties
 
@@ -96,9 +94,9 @@ Tag names in a style sheet can be written as either :symbols or "strings".
 
     Available effect values: `:none`, `:bright`, `:underline`, `:blink`, `:reverse`.
 
-Also, the `:inherit` value can be set for a property, which means that its value will be inherited from the surrounding tag (or be the default value).
+Also, the `:inherit` value can be set for a property, which means that its value will be inherited from the surrounding tag (or be the default value for not nested tags).
 
-Similarly to tag names, property names and values can be provided as :symbols or "strings".
+Property names and values can be provided as :symbols or "strings".
 
 License
 -------
