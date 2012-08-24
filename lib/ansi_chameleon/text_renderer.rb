@@ -1,7 +1,7 @@
 module AnsiChameleon
   class TextRenderer
 
-    CHUNK_REGEX = /<\/?#{Tag::NAME_REG}>|(?:[^<]|<(?!\/)(?!#{Tag::NAME_FIRST_CHAR_REG})|<\/(?!#{Tag::NAME_FIRST_CHAR_REG})|<[^>]*\z)+/.freeze
+    CHUNK_REGEX = /<\/?#{Tag::NAME_REG}[^>]*>|(?:[^<]|<(?!\/)(?!#{Tag::NAME_FIRST_CHAR_REG})|<\/(?!#{Tag::NAME_FIRST_CHAR_REG})|<[^>]*\z)+/.freeze
 
     def self.chunks(text)
       text.scan(CHUNK_REGEX)

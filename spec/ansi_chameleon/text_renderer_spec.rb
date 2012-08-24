@@ -88,9 +88,19 @@ describe AnsiChameleon::TextRenderer do
       it { should == ["Outside ", "<tag>", " inside text ", "</tag>", " outside."] }
     end
 
+    context %{for 'Outside <tag id="id" class="class"> inside text </tag> outside.' (tags with attrs, surrounded by whitespaces)} do
+      let(:text) { %{Outside <tag id="id" class="class"> inside text </tag> outside.} }
+      it { should == ["Outside ", '<tag id="id" class="class">', " inside text ", "</tag>", " outside."] }
+    end
+
     context "for 'Outside<tag>inside</tag>outside.' (tags immediately surrounded by text)" do
       let(:text) { "Outside<tag>inside</tag>outside." }
       it { should == ["Outside", "<tag>", "inside", "</tag>", "outside."] }
+    end
+
+    context %{for 'Outside<tag id="id" class="class">inside</tag>outside.' (tags with attrs, immediately surrounded by text)} do
+      let(:text) { %{Outside<tag id="id" class="class">inside</tag>outside.} }
+      it { should == ["Outside", '<tag id="id" class="class">', "inside", "</tag>", "outside."] }
     end
 
     context "for '<tag>inside</tag>' (text that starts and ends with tags)" do
@@ -98,14 +108,29 @@ describe AnsiChameleon::TextRenderer do
       it { should == ["<tag>", "inside", "</tag>"] }
     end
 
+    context %{for '<tag id="id" class="class">inside</tag>' (text that starts and ends with tags having attrs)} do
+      let(:text) { %{<tag id="id" class="class">inside</tag>} }
+      it { should == ['<tag id="id" class="class">', "inside", "</tag>"] }
+    end
+
     context "for 'Outside <tag></tag> outside.' (tags of empty content)" do
       let(:text) { "Outside <tag></tag> outside." }
       it { should == ["Outside ", "<tag>", "</tag>", " outside."] }
     end
 
+    context %{for 'Outside <tag id="id" class="class"></tag> outside.' (tags with attrs and of empty content)} do
+      let(:text) { %{Outside <tag id="id" class="class"></tag> outside.} }
+      it { should == ["Outside ", '<tag id="id" class="class">', "</tag>", " outside."] }
+    end
+
     context "for 'Outside <tag1><tag2>inside</tag2>inside</tag1> outside.' (nested tags)" do
       let(:text) { "Outside <tag1><tag2>inside</tag2>inside</tag1> outside." }
       it { should == ["Outside ", "<tag1>", "<tag2>", "inside", "</tag2>", "inside", "</tag1>", " outside."] }
+    end
+
+    context %{for 'Outside <tag1 id="id" class="class"><tag2 id="id" class="class">inside</tag2>inside</tag1> outside.' (nested tags with attrs)} do
+      let(:text) { %{Outside <tag1 id="id" class="class"><tag2 id="id" class="class">inside</tag2>inside</tag1> outside.} }
+      it { should == ["Outside ", '<tag1 id="id" class="class">', '<tag2 id="id" class="class">', "inside", "</tag2>", "inside", "</tag1>", " outside."] }
     end
   end
 end
