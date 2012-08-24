@@ -8,8 +8,8 @@ describe AnsiChameleon::TextRenderer do
     let(:style_sheet) { stub(:style_sheet) }
     let(:text_rendering) { stub(:text_rendering, :push_opening_tag => nil, :push_closing_tag => nil, :push_text => nil, :to_s => 'rendered text') }
 
-    it "should create AnsiChameleon::StyleSheetHandler instance and use it for all renderings" do
-      AnsiChameleon::StyleSheetHandler.should_receive(:new).with(style_sheet, AnsiChameleon::StylePropertyNameTranslator).once.and_return(style_sheet_handler)
+    it "should create SimpleStyleSheet::Handler instance and use it for all renderings" do
+      SimpleStyleSheet::Handler.should_receive(:new).with(style_sheet, AnsiChameleon::StylePropertyNameTranslator).once.and_return(style_sheet_handler)
       AnsiChameleon::TextRendering.should_receive(:new).with(style_sheet_handler).twice.and_return(text_rendering)
 
       text_renderer = AnsiChameleon::TextRenderer.new(style_sheet)
@@ -19,7 +19,7 @@ describe AnsiChameleon::TextRenderer do
   end
 
   describe "#render" do
-    before { AnsiChameleon::StyleSheetHandler.stub(:new => style_sheet_handler) }
+    before { SimpleStyleSheet::Handler.stub(:new => style_sheet_handler) }
     subject { described_class.new(stub(:style_sheet)) }
     before { AnsiChameleon::TextRendering.stub(:new => text_rendering) }
     let(:text_rendering) { stub(:text_rendering, :to_s => rendered_text) }

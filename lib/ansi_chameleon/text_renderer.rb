@@ -8,7 +8,7 @@ module AnsiChameleon
     end
 
     def initialize(style_sheet)
-      @style_sheet_handler = StyleSheetHandler.new(style_sheet, StylePropertyNameTranslator)
+      @style_sheet_handler = new_style_sheet_handler(style_sheet)
     end
 
     def render(text)
@@ -29,6 +29,10 @@ module AnsiChameleon
     end
 
     private
+
+    def new_style_sheet_handler(style_sheet)
+      SimpleStyleSheet::Handler.new(style_sheet, StylePropertyNameTranslator)
+    end
 
     def new_text_rendering
       TextRendering.new(@style_sheet_handler).extend(TextRendering::SyntaxValidator)
