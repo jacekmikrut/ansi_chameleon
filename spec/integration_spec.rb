@@ -24,6 +24,31 @@ describe "Multiple use" do
   end
 end
 
+describe "Rendering text" do
+
+  shared_examples_for "properly rendered text" do
+    it "should properly render the text" do
+      AnsiChameleon.render( "There are <number>3</number> oranges on the table.", style_sheet)
+      .should == "\e[0m\e[37m\e[40mThere are \e[0m\e[34m\e[40m3\e[0m\e[37m\e[40m oranges on the table.\e[0m"
+    end
+  end
+
+  context "when the style sheet property names are of the String class" do
+    let(:style_sheet) { { "number" => { "fg_color" => :blue } } }
+    include_examples "properly rendered text"
+  end
+
+  context "when the style sheet property names are of the Symbol class" do
+    let(:style_sheet) { { "number" => { :fg_color => :blue } } }
+    include_examples "properly rendered text"
+  end
+
+  context "when the style sheet property values are of the String class" do
+    let(:style_sheet) { { "number" => { :fg_color => "blue" } } }
+    include_examples "properly rendered text"
+  end
+end
+
 describe "Text with a syntax error:" do
 
   context "lack of the closing tag" do
