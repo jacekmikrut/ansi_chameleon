@@ -2,16 +2,16 @@ require "spec_helper"
 
 describe AnsiChameleon::TextRendering do
 
-  def sequence(effect_name, foreground_color_name=nil, background_color_name=nil)
-    "[SEQUENCE:#{effect_name}:#{foreground_color_name}:#{background_color_name}]"
+  def sequence(effect_value, foreground_color_value=nil, background_color_value=nil)
+    "[SEQUENCE:#{effect_value}:#{foreground_color_value}:#{background_color_value}]"
   end
 
   let(:style_sheet_handler) { stub(:style_sheet_handler, :value_for => nil) }
   subject { AnsiChameleon::TextRendering.new(style_sheet_handler) }
 
   before do
-    AnsiChameleon::SequenceGenerator.stub(:generate) do |effect_name, foreground_color_name, background_color_name|
-      sequence(effect_name, foreground_color_name, background_color_name)
+    AnsiChameleon::SequenceGenerator.stub(:generate) do |effect_value, foreground_color_value, background_color_value|
+      sequence(effect_value, foreground_color_value, background_color_value)
     end
   end
 
@@ -24,11 +24,11 @@ describe AnsiChameleon::TextRendering do
     describe "when the style sheet handler doesn't have any default values" do
 
       it "should start with the sequence for #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect} values" do
-        effect_name           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect]
-        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
-        background_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:background_color]
+        effect_value           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect]
+        foreground_color_value = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
+        background_color_value = AnsiChameleon::TextRendering::DEFAULT_STYLE[:background_color]
 
-        subject.to_s.should be_start_with(sequence(effect_name, foreground_color_name, background_color_name))
+        subject.to_s.should be_start_with(sequence(effect_value, foreground_color_value, background_color_value))
       end
     end
 
@@ -39,9 +39,9 @@ describe AnsiChameleon::TextRendering do
       end
 
       it "should start with the sequence for given default values and for missing ones should use #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect}" do
-        foreground_color_name = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
+        foreground_color_value = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
 
-        subject.to_s.should be_start_with(sequence(:bright, foreground_color_name, :blue))
+        subject.to_s.should be_start_with(sequence(:bright, foreground_color_value, :blue))
       end
     end
   end
