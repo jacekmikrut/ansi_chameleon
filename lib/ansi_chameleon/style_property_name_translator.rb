@@ -5,13 +5,13 @@ module AnsiChameleon
       case property_name
 
       when :background_color, :background, :bg_color
-        :background_color_name
+        :background_color
 
       when :foreground_color, :foreground, :fg_color
-        :foreground_color_name
+        :foreground_color
 
       when :effect
-        :effect_name
+        :effect
 
       end
     end
