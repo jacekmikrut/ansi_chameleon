@@ -12,7 +12,7 @@ module AnsiChameleon
       @stack = Stack.new
 
       @current_style = DEFAULT_STYLE.dup
-      @current_style = deduce_current_style
+      @current_style = style_for(nil)
 
       @rendered_text = ''
       @rendered_text << sequence_for(@current_style)
@@ -21,7 +21,7 @@ module AnsiChameleon
     def push_opening_tag(tag)
       @stack.push(:tag => tag, :outer_style => @current_style)
 
-      @current_style = deduce_current_style
+      @current_style = style_for(tag)
       @rendered_text << sequence_for(@current_style)
     end
 
@@ -52,13 +52,12 @@ module AnsiChameleon
       DEFAULT_STYLE.keys
     end
 
-    def deduce_current_style
+    def style_for(tag)
       property_names.inject({}) do |style, property_name|
-        property_value = @style_sheet_handler.value_for(@stack.top_tag, property_name)
+        property_value = @style_sheet_handler.value_for(tag, property_name)
         style[property_name] = [:inherit, nil].include?(property_value) ? @current_style[property_name] : property_value
         style
       end
     end
-
   end
 end
