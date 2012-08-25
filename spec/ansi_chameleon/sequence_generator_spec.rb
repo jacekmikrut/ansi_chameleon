@@ -105,7 +105,7 @@ describe AnsiChameleon::SequenceGenerator do
         AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
         AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
 
-        subject.should == "[effect_sequence][foreground_color_sequence][background_color_sequence]"
+        subject.should == "\033[0m[effect_sequence][foreground_color_sequence][background_color_sequence]"
       end
     end
   end

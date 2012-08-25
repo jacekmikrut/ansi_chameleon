@@ -11,7 +11,7 @@ module AnsiChameleon
       if effect_value.to_sym == :reset
         "\033[0m"
       else
-        "#{effect_sequence(effect_value)}#{foreground_color_sequence(foreground_color_value)}#{background_color_sequence(background_color_value)}"
+        "\033[0m#{effect_sequence(effect_value)}#{foreground_color_sequence(foreground_color_value)}#{background_color_sequence(background_color_value)}"
       end
     end
 
