@@ -1,24 +1,7 @@
 ansi_chameleon
 ==============
 
-ansi_chameleon is a Ruby Gem that **colorizes text terminal output** by converting custom HTML-like tags into color ANSI escape sequences.
-
-Installation
-------------
-
-As a Ruby Gem, ansi_chameleon can be installed either by running
-
-```bash
-  gem install ansi_chameleon
-```
-
-or adding
-
-```ruby
-  gem "ansi_chameleon"
-```
-
-to the Gemfile and then invoking `bundle install`.
+ansi_chameleon is a Ruby gem that **colorizes text terminal output** by converting custom HTML-like tags into color ANSI escape sequences.
 
 Usage
 -----
@@ -81,7 +64,7 @@ A style sheet is simply a CSS-like Hash structure with keys that correspond to C
   }
 ```
 
-More information can be found in the description of [simple_style_sheet](https://github.com/jacekmikrut/simple_style_sheet) Ruby Gem.
+More information can be found in the description of [simple_style_sheet](https://github.com/jacekmikrut/simple_style_sheet) Ruby gem.
 
 #### Properties
 
@@ -97,6 +80,23 @@ More information can be found in the description of [simple_style_sheet](https:/
 Also, the `:inherit` value can be set for a property, which means that its value will be inherited from the surrounding tag (or be the default value for not nested tags).
 
 Property names and values can be provided as :symbols or "strings".
+
+Installation
+------------
+
+As a Ruby gem, ansi_chameleon can be installed either by running
+
+```bash
+  gem install ansi_chameleon
+```
+
+or adding
+
+```ruby
+  gem "ansi_chameleon"
+```
+
+to the Gemfile and then invoking `bundle install`.
 
 License
 -------
