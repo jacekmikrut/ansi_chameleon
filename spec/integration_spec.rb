@@ -7,7 +7,7 @@ describe "Single use" do
       '<poetry class="short">There are <number>3</number> oranges on the table.</poetry>',
       'poetry.short' => { :effect => :bright }, 'number' => { :fg_color => :blue }
     )
-    .should == "\e[0m\e[37m\e[40m\e[1m\e[37m\e[40mThere are \e[1m\e[34m\e[40m3\e[1m\e[37m\e[40m oranges on the table.\e[0m\e[37m\e[40m\e[0m"
+    .should == "\e[0m\e[37m\e[40m\e[1m\e[37m\e[40mThere are \e[0m\e[34m\e[40m3\e[1m\e[37m\e[40m oranges on the table.\e[0m\e[37m\e[40m\e[0m"
   end
 end
 
@@ -17,10 +17,10 @@ describe "Multiple use" do
     text_renderer = AnsiChameleon::TextRenderer.new("poetry.short" => { :effect => :bright }, "number" => { :fg_color => :blue })
 
     text_renderer.render('<poetry class="short">There are <number>2</number> oranges on the table.</poetry>')
-    .should == "\e[0m\e[37m\e[40m\e[1m\e[37m\e[40mThere are \e[1m\e[34m\e[40m2\e[1m\e[37m\e[40m oranges on the table.\e[0m\e[37m\e[40m\e[0m"
+    .should == "\e[0m\e[37m\e[40m\e[1m\e[37m\e[40mThere are \e[0m\e[34m\e[40m2\e[1m\e[37m\e[40m oranges on the table.\e[0m\e[37m\e[40m\e[0m"
 
     text_renderer.render('<poetry class="short">Now, there is only <number>1</number> orange.</poetry>')
-    .should == "\e[0m\e[37m\e[40m\e[1m\e[37m\e[40mNow, there is only \e[1m\e[34m\e[40m1\e[1m\e[37m\e[40m orange.\e[0m\e[37m\e[40m\e[0m"
+    .should == "\e[0m\e[37m\e[40m\e[1m\e[37m\e[40mNow, there is only \e[0m\e[34m\e[40m1\e[1m\e[37m\e[40m orange.\e[0m\e[37m\e[40m\e[0m"
   end
 end
 

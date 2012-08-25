@@ -56,8 +56,10 @@ module AnsiChameleon
       property_names.inject({}) do |style, property_name|
         property_value = @style_sheet_handler.value_for(tag, property_name)
         style[property_name] = case property_value
-                               when :inherit, 'inherit', nil
+                               when :inherit, 'inherit'
                                  @current_style[property_name]
+                               when nil
+                                 DEFAULT_STYLE[property_name]
                                else
                                  property_value
                                end
