@@ -108,5 +108,35 @@ describe AnsiChameleon::SequenceGenerator do
         subject.should == "\033[0m[effect_sequence][foreground_color_sequence][background_color_sequence]"
       end
     end
+
+    context "AnsiChameleon::SequenceGenerator.generate(nil, :foreground_color_value, :background_color_value)" do
+      it "should only generate sequences for non-nil values" do
+        AnsiChameleon::SequenceGenerator.should_not_receive(:effect_sequence)
+        AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
+        AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
+
+        subject.should == "\033[0m[foreground_color_sequence][background_color_sequence]"
+      end
+    end
+
+    context "AnsiChameleon::SequenceGenerator.generate(:effect_value, nil, :background_color_value)" do
+      it "should only generate sequences for non-nil values" do
+        AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence).with(:effect_value).ordered.and_return('[effect_sequence]'          )
+        AnsiChameleon::SequenceGenerator.should_not_receive(:foreground_color_sequence)
+        AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
+
+        subject.should == "\033[0m[effect_sequence][background_color_sequence]"
+      end
+    end
+
+    context "AnsiChameleon::SequenceGenerator.generate(:effect_value, :foreground_color_value, nil)" do
+      it "should only generate sequences for non-nil values" do
+        AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence).with(:effect_value).ordered.and_return('[effect_sequence]'          )
+        AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
+        AnsiChameleon::SequenceGenerator.should_not_receive(:background_color_sequence)
+
+        subject.should == "\033[0m[effect_sequence][foreground_color_sequence]"
+      end
+    end
   end
 end
