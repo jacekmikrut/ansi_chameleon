@@ -1,6 +1,8 @@
 module AnsiChameleon
   class TextRendering
 
+    PROPERTY_NAMES = [:effect, :foreground_color, :background_color].freeze
+
     DEFAULT_STYLE = {
       :effect           => :none,
       :foreground_color => :white,
@@ -48,12 +50,8 @@ module AnsiChameleon
       )
     end
 
-    def property_names
-      DEFAULT_STYLE.keys
-    end
-
     def style_for(tag)
-      property_names.inject({}) do |style, property_name|
+      PROPERTY_NAMES.inject({}) do |style, property_name|
         property_value = @style_sheet_handler.value_for(tag, property_name)
         style[property_name] = case property_value
                                when :inherit, 'inherit'
