@@ -55,7 +55,7 @@ module AnsiChameleon
     def style_for(tag)
       property_names.inject({}) do |style, property_name|
         property_value = @style_sheet_handler.value_for(tag, property_name)
-        style[property_name] = [:inherit, nil].include?(property_value) ? @current_style[property_name] : property_value
+        style[property_name] = [:inherit, 'inherit', nil].include?(property_value) ? @current_style[property_name] : property_value
         style
       end
     end

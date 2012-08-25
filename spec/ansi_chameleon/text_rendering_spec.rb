@@ -136,6 +136,17 @@ describe AnsiChameleon::TextRendering do
 
         include_examples "some text and non-nested tags"
       end
+
+      context "when property values are given as Strings" do
+        let(:tag_a_foreground_color) { "inherit"        }
+        let(:tag_a_background_color) { "tag_a_bg_color" }
+
+        let(:tag_b_effect          ) { "tag_b_effect"   }
+        let(:tag_b_foreground_color) { "tag_b_fg_color" }
+        let(:tag_b_background_color) { "tag_b_bg_color" }
+
+        include_examples "some text and non-nested tags"
+      end
     end
 
     describe "for some text and nested tags pushed" do
@@ -198,6 +209,17 @@ describe AnsiChameleon::TextRendering do
         let(:tag_b_effect          ) { :inherit        }
         let(:tag_b_foreground_color) { :inherit        }
         let(:tag_b_background_color) { :tag_b_bg_color }
+
+        include_examples "some text and nested tags"
+      end
+
+      context "when property values are given as Strings" do
+        let(:tag_a_foreground_color) { "tag_a_fg_color" }
+        let(:tag_a_background_color) { "tag_a_bg_color" }
+
+        let(:tag_b_effect          ) { "inherit"        }
+        let(:tag_b_foreground_color) { "inherit"        }
+        let(:tag_b_background_color) { "tag_b_bg_color" }
 
         include_examples "some text and nested tags"
       end
