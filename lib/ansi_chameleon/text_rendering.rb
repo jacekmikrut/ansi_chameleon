@@ -14,7 +14,7 @@ module AnsiChameleon
     def push_opening_tag(tag)
       original_style = current_style
 
-      stack.push(:style => style_for(tag), :tag => tag)
+      stack.push(:style => style_for(tag, current_style), :tag => tag)
       rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
@@ -56,12 +56,12 @@ module AnsiChameleon
       )
     end
 
-    def style_for(tag)
+    def style_for(tag, parent_style={})
       PROPERTY_NAMES.inject({}) do |style, property_name|
         if property_value = @style_sheet_handler.value_for(tag, property_name)
           style[property_name] = case property_value
                                  when :inherit, 'inherit'
-                                   current_style[property_name]
+                                   parent_style[property_name]
                                  else
                                    property_value
                                  end
