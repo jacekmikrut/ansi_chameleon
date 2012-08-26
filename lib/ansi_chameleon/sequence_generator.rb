@@ -25,10 +25,11 @@ module AnsiChameleon
     end
 
     def self.foreground_color_sequence(value)
-      if NUMBER_FROM_0_TO_255.call(value)
+      case value
+      when NUMBER_FROM_0_TO_255
         "\033[38;5;#{value}m"
 
-      elsif VALID_COLOR_NAME.call(value)
+      when VALID_COLOR_NAME
         "\033[#{COLORS.index(value.to_sym) + 30}m"
 
       else
@@ -38,10 +39,11 @@ module AnsiChameleon
     end
 
     def self.background_color_sequence(value)
-      if NUMBER_FROM_0_TO_255.call(value)
+      case value
+      when NUMBER_FROM_0_TO_255
         "\033[48;5;#{value}m"
 
-      elsif VALID_COLOR_NAME.call(value)
+      when VALID_COLOR_NAME
         "\033[#{COLORS.index(value.to_sym) + 40}m"
 
       else
