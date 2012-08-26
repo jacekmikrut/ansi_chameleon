@@ -11,9 +11,9 @@ describe AnsiChameleon::TextRendering::Stack do
   end
 
   describe "#push and #pop" do
-    let(:item_1) { { :outer_style => {}                                  } }
-    let(:item_2) { { :outer_style => {}, :tag => Struct.new(:parent).new } }
-    let(:item_3) { { :outer_style => {}, :tag => Struct.new(:parent).new } }
+    let(:item_1) { { :style => {}                                  } }
+    let(:item_2) { { :style => {}, :tag => Struct.new(:parent).new } }
+    let(:item_3) { { :style => {}, :tag => Struct.new(:parent).new } }
 
     context "after a few items were pushed to the stack" do
       before do
@@ -34,7 +34,7 @@ describe AnsiChameleon::TextRendering::Stack do
     let(:tag) { Struct.new(:parent).new }
 
     context "after a tag was pushed to an empty stack" do
-      before { stack.push(:outer_style => {}, :tag => tag) }
+      before { stack.push(:style => {}, :tag => tag) }
 
       it "should assign nil as the tag's parent" do
         tag.parent.should be_nil
@@ -43,8 +43,8 @@ describe AnsiChameleon::TextRendering::Stack do
 
     context "after a tag was pushed to a stack only containing non-:tag items" do
       before do
-        stack.push(:outer_style => {})
-        stack.push(:outer_style => {}, :tag => tag)
+        stack.push(:style => {})
+        stack.push(:style => {}, :tag => tag)
       end
 
       it "should assign nil as the tag's parent" do
@@ -59,10 +59,10 @@ describe AnsiChameleon::TextRendering::Stack do
 
       context "and the previously pushed item is a :tag item" do
         before do
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_1)
-          stack.push(:outer_style => {}, :tag => tag_2)
-          stack.push(:outer_style => {}, :tag => tag_3)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_1)
+          stack.push(:style => {}, :tag => tag_2)
+          stack.push(:style => {}, :tag => tag_3)
         end
 
         it "should assign the previously pushed tag as the tag's parent" do
@@ -72,10 +72,10 @@ describe AnsiChameleon::TextRendering::Stack do
 
       context "and the previously pushed item is a non-:tag item" do
         before do
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_1)
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_2)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_1)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_2)
         end
 
         it "should assign the previously pushed tag as the tag's parent" do
@@ -95,15 +95,15 @@ describe AnsiChameleon::TextRendering::Stack do
       let(:tag_2) { Struct.new(:parent).new }
 
       before do
-        stack.push(:outer_style => {})
-        stack.push(:outer_style => {}, :tag => tag_1)
-        stack.push(:outer_style => {}, :tag => tag_2)
+        stack.push(:style => {})
+        stack.push(:style => {}, :tag => tag_1)
+        stack.push(:style => {}, :tag => tag_2)
       end
 
       it "should be an array containing the pushed items, from bottom to the top" do
-        stack.items.should eq([ { :outer_style => {}                },
-                                { :outer_style => {}, :tag => tag_1 },
-                                { :outer_style => {}, :tag => tag_2 } ])
+        stack.items.should eq([ { :style => {}                },
+                                { :style => {}, :tag => tag_1 },
+                                { :style => {}, :tag => tag_2 } ])
       end
     end
   end
@@ -114,7 +114,7 @@ describe AnsiChameleon::TextRendering::Stack do
     end
 
     context "for a stack only containing non-:tag items" do
-      before { stack.push(:outer_style => {}) }
+      before { stack.push(:style => {}) }
 
       it { stack.top_tag.should be_nil }
     end
@@ -125,9 +125,9 @@ describe AnsiChameleon::TextRendering::Stack do
 
       context "and the recently pushed item is a :tag item" do
         before do
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_1)
-          stack.push(:outer_style => {}, :tag => tag_2)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_1)
+          stack.push(:style => {}, :tag => tag_2)
         end
 
         it "should be the most recently pushed tag" do
@@ -137,10 +137,10 @@ describe AnsiChameleon::TextRendering::Stack do
 
       context "and the recently pushed item is a non-:tag item" do
         before do
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_1)
-          stack.push(:outer_style => {}, :tag => tag_2)
-          stack.push(:outer_style => {})
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_1)
+          stack.push(:style => {}, :tag => tag_2)
+          stack.push(:style => {})
         end
 
         it "should be the most recently pushed tag" do
@@ -156,7 +156,7 @@ describe AnsiChameleon::TextRendering::Stack do
     end
 
     context "for a stack only containing non-:tag items" do
-      before { stack.push(:outer_style => {}) }
+      before { stack.push(:style => {}) }
 
       it { stack.top_tag_name.should be_nil }
     end
@@ -167,9 +167,9 @@ describe AnsiChameleon::TextRendering::Stack do
 
       context "and the recently pushed item is a :tag item" do
         before do
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_1)
-          stack.push(:outer_style => {}, :tag => tag_2)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_1)
+          stack.push(:style => {}, :tag => tag_2)
         end
 
         it "should be the most recently pushed tag's name" do
@@ -179,10 +179,10 @@ describe AnsiChameleon::TextRendering::Stack do
 
       context "and the recently pushed item is a non-:tag item" do
         before do
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_1)
-          stack.push(:outer_style => {})
-          stack.push(:outer_style => {}, :tag => tag_2)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_1)
+          stack.push(:style => {})
+          stack.push(:style => {}, :tag => tag_2)
         end
 
         it "should be the most recently pushed tag's name" do
@@ -198,7 +198,7 @@ describe AnsiChameleon::TextRendering::Stack do
     end
 
     context "for a stack only containing non-:tag items" do
-      before { stack.push(:outer_style => {}) }
+      before { stack.push(:style => {}) }
 
       it { stack.tags.should eq([]) }
     end
@@ -208,10 +208,10 @@ describe AnsiChameleon::TextRendering::Stack do
       let(:tag_2) { Struct.new(:name, :parent).new("tag 2") }
 
       before do
-        stack.push(:outer_style => {})
-        stack.push(:outer_style => {}, :tag => tag_1)
-        stack.push(:outer_style => {})
-        stack.push(:outer_style => {}, :tag => tag_2)
+        stack.push(:style => {})
+        stack.push(:style => {}, :tag => tag_1)
+        stack.push(:style => {})
+        stack.push(:style => {}, :tag => tag_2)
       end
 
       it "should be the array of the :tag items" do

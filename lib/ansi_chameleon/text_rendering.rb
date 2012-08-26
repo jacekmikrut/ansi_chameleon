@@ -9,22 +9,23 @@ module AnsiChameleon
       @rendered_text = ''
 
       original_style = {}
-      @current_style = style_for(nil)
-      @rendered_text << sequence_for(@current_style) unless original_style == @current_style
+
+      @stack.push(:style => style_for(nil))
+      @rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
     def push_opening_tag(tag)
-      @stack.push(:tag => tag, :outer_style => @current_style)
+      original_style = current_style
 
-      original_style = @current_style
-      @current_style = style_for(tag)
-      @rendered_text << sequence_for(@current_style) unless original_style == @current_style
+      @stack.push(:style => style_for(tag), :tag => tag)
+      @rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
     def push_closing_tag(tag)
-      original_style = @current_style
-      @current_style = @stack.pop[:outer_style]
-      @rendered_text << sequence_for(@current_style) unless original_style == @current_style
+      original_style = current_style
+
+      @stack.pop
+      @rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
     def push_text(text)
@@ -32,10 +33,14 @@ module AnsiChameleon
     end
 
     def to_s
-      @rendered_text + (@current_style == {} ? '' : sequence_for({}))
+      @rendered_text + (current_style == {} ? '' : sequence_for({}))
     end
 
     private
+
+    def current_style
+      @stack.items.last && @stack.items.last[:style]
+    end
 
     def sequence_for(style)
       AnsiChameleon::SequenceGenerator.generate(
@@ -50,7 +55,7 @@ module AnsiChameleon
         if property_value = @style_sheet_handler.value_for(tag, property_name)
           style[property_name] = case property_value
                                  when :inherit, 'inherit'
-                                   @current_style[property_name]
+                                   current_style[property_name]
                                  else
                                    property_value
                                  end
