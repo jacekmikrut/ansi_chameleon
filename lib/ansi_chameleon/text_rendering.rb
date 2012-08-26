@@ -39,7 +39,7 @@ module AnsiChameleon
     private
 
     def current_style
-      @stack.items.last && @stack.items.last[:style]
+      @stack.top_style
     end
 
     def sequence_for(style)

@@ -29,6 +29,9 @@ module AnsiChameleon
         top_tag && top_tag.name
       end
 
+      def top_style
+        items.last && items.last[:style]
+      end
     end
   end
 end

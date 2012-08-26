@@ -219,4 +219,25 @@ describe AnsiChameleon::TextRendering::Stack do
       end
     end
   end
+
+  describe "#top_style" do
+    context "for an empty stack" do
+      it { stack.top_style.should be_nil }
+    end
+
+    context "for a non-empty stack" do
+      let(:tag) { Struct.new(:parent).new }
+      let(:style_1) { stub(:style_1) }
+      let(:style_2) { stub(:style_2) }
+
+      before do
+        stack.push(:style => style_1)
+        stack.push(:style => style_2, :tag => tag)
+      end
+
+      it "should be the most recently pushed style" do
+        stack.top_style.should equal(style_2)
+      end
+    end
+  end
 end
