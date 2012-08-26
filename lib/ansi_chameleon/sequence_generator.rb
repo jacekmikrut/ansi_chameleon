@@ -8,6 +8,7 @@ module AnsiChameleon
     EFFECTS = { :none => 0, :bright => 1, :underline => 4, :blink => 5, :reverse => 7 }
 
     NUMBER_FROM_0_TO_255 = proc { |value| value.to_s =~ /^\d+$/ && (0..255).member?(value.to_i) }
+    VALID_COLOR_NAME     = proc { |value| COLORS.include?(value.to_s.to_sym) }
 
     def self.generate(style)
       "\033[0m" + style.map { |name, value| send("#{name}_sequence", value) }.join
@@ -27,7 +28,7 @@ module AnsiChameleon
       if NUMBER_FROM_0_TO_255.call(value)
         "\033[38;5;#{value}m"
 
-      elsif COLORS.include?(value.to_s.to_sym)
+      elsif VALID_COLOR_NAME.call(value)
         "\033[#{COLORS.index(value.to_sym) + 30}m"
 
       else
@@ -40,7 +41,7 @@ module AnsiChameleon
       if NUMBER_FROM_0_TO_255.call(value)
         "\033[48;5;#{value}m"
 
-      elsif COLORS.include?(value.to_s.to_sym)
+      elsif VALID_COLOR_NAME.call(value)
         "\033[#{COLORS.index(value.to_sym) + 40}m"
 
       else
