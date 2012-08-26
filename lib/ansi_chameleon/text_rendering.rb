@@ -11,32 +11,34 @@ module AnsiChameleon
       original_style = {}
 
       @stack.push(:style => style_for(nil))
-      @rendered_text << sequence_for(current_style) unless current_style == original_style
+      rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
     def push_opening_tag(tag)
       original_style = current_style
 
       @stack.push(:style => style_for(tag), :tag => tag)
-      @rendered_text << sequence_for(current_style) unless current_style == original_style
+      rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
     def push_closing_tag(tag)
       original_style = current_style
 
       @stack.pop
-      @rendered_text << sequence_for(current_style) unless current_style == original_style
+      rendered_text << sequence_for(current_style) unless current_style == original_style
     end
 
     def push_text(text)
-      @rendered_text << text
+      rendered_text << text
     end
 
     def to_s
-      @rendered_text + (current_style == {} ? '' : sequence_for({}))
+      rendered_text + (current_style == {} ? '' : sequence_for({}))
     end
 
     private
+
+    attr_reader :rendered_text
 
     def current_style
       @stack.top_style
