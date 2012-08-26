@@ -3,7 +3,11 @@ require "spec_helper"
 describe AnsiChameleon::TextRendering do
 
   def sequence(effect_value, foreground_color_value=nil, background_color_value=nil)
-    "[SEQUENCE:#{effect_value}:#{foreground_color_value}:#{background_color_value}]"
+    [                           "[SEQUENCE:RESET",
+                effect_value && "EFFECT=#{effect_value}",
+      foreground_color_value && "FGCOLOR=#{foreground_color_value}",
+      background_color_value && "BGCOLOR=#{background_color_value}",
+    ].compact.join(":") + "]"
   end
 
   let(:style_sheet_handler) { stub(:style_sheet_handler, :value_for => nil) }
@@ -17,18 +21,19 @@ describe AnsiChameleon::TextRendering do
 
   describe "#to_s" do
 
-    it "should end with the :reset sequence" do
-      subject.to_s.should be_end_with(sequence(:reset))
-    end
-
     describe "when the style sheet handler doesn't have any default values" do
+      context "when there is some text pushed" do
+        before { subject.push_text("Some text.") }
 
-      it "should start with the sequence for #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect} values" do
-        effect_value           = AnsiChameleon::TextRendering::DEFAULT_STYLE[:effect]
-        foreground_color_value = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
-        background_color_value = AnsiChameleon::TextRendering::DEFAULT_STYLE[:background_color]
+        it "should return the pushed text" do
+          expect(subject.to_s).to eq("Some text.")
+        end
+      end
 
-        subject.to_s.should be_start_with(sequence(effect_value, foreground_color_value, background_color_value))
+      context "when no text nor tags were pushed" do
+        it "should return an empty string" do
+          expect(subject.to_s).to eq("")
+        end
       end
     end
 
@@ -38,10 +43,18 @@ describe AnsiChameleon::TextRendering do
         style_sheet_handler.stub(:value_for).with(nil, :background_color).and_return(:blue)
       end
 
-      it "should start with the sequence for given default values and for missing ones should use #{AnsiChameleon::TextRendering::DEFAULT_STYLE.inspect}" do
-        foreground_color_value = AnsiChameleon::TextRendering::DEFAULT_STYLE[:foreground_color]
+      context "when there is some text pushed" do
+        before { subject.push_text("Some text.") }
 
-        subject.to_s.should be_start_with(sequence(:bright, foreground_color_value, :blue))
+        it "should start with the sequence for given default values" do
+          expect(subject.to_s).to start_with(sequence(:bright, nil, :blue))
+        end
+      end
+
+      context "when no text nor tags were pushed" do
+        it "should start with the sequence for given default values" do
+          expect(subject.to_s).to start_with(sequence(:bright, nil, :blue))
+        end
       end
     end
   end
@@ -51,19 +64,13 @@ describe AnsiChameleon::TextRendering do
       style_sheet_handler.stub(:value_for).with(nil, :effect          ).and_return(:default_effect)
       style_sheet_handler.stub(:value_for).with(nil, :foreground_color).and_return(:default_fg_color)
       style_sheet_handler.stub(:value_for).with(nil, :background_color).and_return(:default_bg_color)
-
-      stub_const("AnsiChameleon::TextRendering::DEFAULT_STYLE", {
-        :effect           => :default_text_rendering_effect,
-        :foreground_color => :default_text_rendering_foreground_color,
-        :background_color => :default_text_rendering_background_color
-      })
     end
 
     describe "for nothing pushed" do
       it "should return rendered text" do
         subject.to_s.should ==
           "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
-          "#{sequence(:reset)}"
+          "#{sequence(nil, nil, nil)}"
       end
     end
 
@@ -77,7 +84,7 @@ describe AnsiChameleon::TextRendering do
         subject.to_s.should ==
           "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
           "First sentence. Second sentence." +
-          "#{sequence(:reset)}"
+          "#{sequence(nil, nil, nil)}"
       end
     end
 
@@ -119,7 +126,7 @@ describe AnsiChameleon::TextRendering do
             "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
               "First sentence. " +
 
-              "#{sequence(:default_text_rendering_effect, :default_fg_color, :tag_a_bg_color)}" +
+              "#{sequence(nil, :default_fg_color, :tag_a_bg_color)}" +
                 "Text in tag_a." +
               "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
 
@@ -128,7 +135,7 @@ describe AnsiChameleon::TextRendering do
               "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
 
               " Second sentence." +
-            "#{sequence(:reset)}"
+            "#{sequence(nil, nil, nil)}"
         end
       end
 
@@ -194,17 +201,17 @@ describe AnsiChameleon::TextRendering do
             "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
               "First sentence. " +
 
-              "#{sequence(:default_text_rendering_effect, :tag_a_fg_color, :tag_a_bg_color)}" +
+              "#{sequence(nil, :tag_a_fg_color, :tag_a_bg_color)}" +
                 "Text in tag_a." +
 
-                "#{sequence(:default_text_rendering_effect, :default_text_rendering_foreground_color, :tag_b_bg_color)}" +
+                "#{sequence(nil, nil, :tag_b_bg_color)}" +
                   "Text in tag_b." +
-                "#{sequence(:default_text_rendering_effect, :tag_a_fg_color, :tag_a_bg_color)}" +
+                "#{sequence(nil, :tag_a_fg_color, :tag_a_bg_color)}" +
 
               "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
 
               " Second sentence." +
-            "#{sequence(:reset)}"
+            "#{sequence(nil, nil, nil)}"
         end
       end
 
