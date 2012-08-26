@@ -13,7 +13,7 @@ module AnsiChameleon
       when :blinking_text, :blinking, :blink
         :blinking_text
 
-      when :reverse_video_text, :reverse_video, :reverse
+      when :reverse_video_text, :reverse_video
         :reverse_video_text
 
       when :background_color, :background, :bg_color
