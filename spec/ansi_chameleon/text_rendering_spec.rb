@@ -2,21 +2,15 @@ require "spec_helper"
 
 describe AnsiChameleon::TextRendering do
 
-  def sequence(effect_value, foreground_color_value=nil, background_color_value=nil)
-    [                           "[SEQUENCE:RESET",
-                effect_value && "EFFECT=#{effect_value}",
-      foreground_color_value && "FGCOLOR=#{foreground_color_value}",
-      background_color_value && "BGCOLOR=#{background_color_value}",
-    ].compact.join(":") + "]"
+  def sequence(style)
+    "[SEQUENCE:RESET:" + style.map { |key, value| "#{key}=#{value}" }.join(":") + "]"
   end
 
   let(:style_sheet_handler) { stub(:style_sheet_handler, :value_for => nil) }
   subject { AnsiChameleon::TextRendering.new(style_sheet_handler) }
 
   before do
-    AnsiChameleon::SequenceGenerator.stub(:generate) do |effect_value, foreground_color_value, background_color_value|
-      sequence(effect_value, foreground_color_value, background_color_value)
-    end
+    AnsiChameleon::SequenceGenerator.stub(:generate) { |style| sequence(style) }
   end
 
   describe "#to_s" do
@@ -47,13 +41,13 @@ describe AnsiChameleon::TextRendering do
         before { subject.push_text("Some text.") }
 
         it "should start with the sequence for given default values" do
-          expect(subject.to_s).to start_with(sequence(:bright, nil, :blue))
+          expect(subject.to_s).to start_with(sequence(:effect => :bright, :background_color => :blue))
         end
       end
 
       context "when no text nor tags were pushed" do
         it "should start with the sequence for given default values" do
-          expect(subject.to_s).to start_with(sequence(:bright, nil, :blue))
+          expect(subject.to_s).to start_with(sequence(:effect => :bright, :background_color => :blue))
         end
       end
     end
@@ -69,8 +63,8 @@ describe AnsiChameleon::TextRendering do
     describe "for nothing pushed" do
       it "should return rendered text" do
         subject.to_s.should ==
-          "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
-          "#{sequence(nil, nil, nil)}"
+          "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+          "#{sequence({})}"
       end
     end
 
@@ -82,9 +76,9 @@ describe AnsiChameleon::TextRendering do
 
       it "should return rendered text" do
         subject.to_s.should ==
-          "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
+          "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
           "First sentence. Second sentence." +
-          "#{sequence(nil, nil, nil)}"
+          "#{sequence({})}"
       end
     end
 
@@ -123,19 +117,19 @@ describe AnsiChameleon::TextRendering do
       shared_examples_for "some text and non-nested tags" do
         it "should return rendered text" do
           subject.to_s.should ==
-            "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
+            "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
               "First sentence. " +
 
-              "#{sequence(nil, :default_fg_color, :tag_a_bg_color)}" +
+              "#{sequence(:foreground_color => :default_fg_color, :background_color => :tag_a_bg_color)}" +
                 "Text in tag_a." +
-              "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
+              "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
 
-              "#{sequence(:tag_b_effect, :tag_b_fg_color, :tag_b_bg_color)}" +
+              "#{sequence(:effect => :tag_b_effect, :foreground_color => :tag_b_fg_color, :background_color => :tag_b_bg_color)}" +
                 "Text in tag_b." +
-              "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
+              "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
 
               " Second sentence." +
-            "#{sequence(nil, nil, nil)}"
+            "#{sequence({})}"
         end
       end
 
@@ -198,20 +192,20 @@ describe AnsiChameleon::TextRendering do
       shared_examples_for "some text and nested tags" do
         it "should return rendered text" do
           subject.to_s.should ==
-            "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
+            "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
               "First sentence. " +
 
-              "#{sequence(nil, :tag_a_fg_color, :tag_a_bg_color)}" +
+              "#{sequence(:foreground_color => :tag_a_fg_color, :background_color => :tag_a_bg_color)}" +
                 "Text in tag_a." +
 
-                "#{sequence(nil, nil, :tag_b_bg_color)}" +
+                "#{sequence(:background_color => :tag_b_bg_color)}" +
                   "Text in tag_b." +
-                "#{sequence(nil, :tag_a_fg_color, :tag_a_bg_color)}" +
+                "#{sequence(:foreground_color => :tag_a_fg_color, :background_color => :tag_a_bg_color)}" +
 
-              "#{sequence(:default_effect, :default_fg_color, :default_bg_color)}" +
+              "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
 
               " Second sentence." +
-            "#{sequence(nil, nil, nil)}"
+            "#{sequence({})}"
         end
       end
 

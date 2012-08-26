@@ -7,12 +7,8 @@ module AnsiChameleon
     COLORS = [:black, :red, :green, :yellow, :blue, :magenta, :cyan, :white]
     EFFECTS = { :none => 0, :bright => 1, :underline => 4, :blink => 5, :reverse => 7 }
 
-    def self.generate(effect_value, foreground_color_value=nil, background_color_value=nil)
-      [ "\033[0m",
-        effect_value && effect_sequence(effect_value),
-        foreground_color_value && foreground_color_sequence(foreground_color_value),
-        background_color_value && background_color_sequence(background_color_value)
-      ].compact.join
+    def self.generate(style)
+      "\033[0m" + style.map { |name, value| send("#{name}_sequence", value) }.join
     end
 
     def self.effect_sequence(value)

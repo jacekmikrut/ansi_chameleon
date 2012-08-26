@@ -49,22 +49,18 @@ module AnsiChameleon
     end
 
     def sequence_for(style)
-      AnsiChameleon::SequenceGenerator.generate(
-        style[:effect          ],
-        style[:foreground_color],
-        style[:background_color]
-      )
+      AnsiChameleon::SequenceGenerator.generate(style)
     end
 
     def style_for(tag, parent_style={})
       PROPERTY_NAMES.inject({}) do |style, property_name|
         if property_value = @style_sheet_handler.value_for(tag, property_name)
-          style[property_name] = case property_value
-                                 when :inherit, 'inherit'
-                                   parent_style[property_name]
-                                 else
-                                   property_value
-                                 end
+          case property_value
+          when :inherit, 'inherit'
+            style[property_name] = parent_style[property_name] if parent_style.key?(property_name)
+          else
+            style[property_name] = property_value
+          end
         end
         style
       end

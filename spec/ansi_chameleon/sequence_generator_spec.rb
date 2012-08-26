@@ -95,7 +95,7 @@ describe AnsiChameleon::SequenceGenerator do
 
   describe ".generate" do
 
-    describe "AnsiChameleon::SequenceGenerator.generate(:effect_value, :foreground_color_value, :background_color_value)" do
+    describe "AnsiChameleon::SequenceGenerator.generate(:effect => :effect_value, :foreground_color => :foreground_color_value, :background_color => :background_color_value)" do
       it "should delegate sequences generation to proper methods and return received sequences concatenated in proper order" do
         AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence          ).with(:effect_value          ).ordered.and_return('[effect_sequence]'          )
         AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
@@ -105,8 +105,8 @@ describe AnsiChameleon::SequenceGenerator do
       end
     end
 
-    context "AnsiChameleon::SequenceGenerator.generate(nil, :foreground_color_value, :background_color_value)" do
-      it "should only generate sequences for non-nil values" do
+    context "AnsiChameleon::SequenceGenerator.generate(:foreground_color => :foreground_color_value, :background_color => :background_color_value)" do
+      it "should only generate sequences for given properties" do
         AnsiChameleon::SequenceGenerator.should_not_receive(:effect_sequence)
         AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
         AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
@@ -115,8 +115,8 @@ describe AnsiChameleon::SequenceGenerator do
       end
     end
 
-    context "AnsiChameleon::SequenceGenerator.generate(:effect_value, nil, :background_color_value)" do
-      it "should only generate sequences for non-nil values" do
+    context "AnsiChameleon::SequenceGenerator.generate(:effect => :effect_value, :background_color => :background_color_value)" do
+      it "should only generate sequences for given properties" do
         AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence).with(:effect_value).ordered.and_return('[effect_sequence]'          )
         AnsiChameleon::SequenceGenerator.should_not_receive(:foreground_color_sequence)
         AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
@@ -125,8 +125,8 @@ describe AnsiChameleon::SequenceGenerator do
       end
     end
 
-    context "AnsiChameleon::SequenceGenerator.generate(:effect_value, :foreground_color_value, nil)" do
-      it "should only generate sequences for non-nil values" do
+    context "AnsiChameleon::SequenceGenerator.generate(:effect => :effect_value, :foreground_color => :foreground_color_value)" do
+      it "should only generate sequences for given properties" do
         AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence).with(:effect_value).ordered.and_return('[effect_sequence]'          )
         AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
         AnsiChameleon::SequenceGenerator.should_not_receive(:background_color_sequence)
