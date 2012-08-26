@@ -73,9 +73,12 @@ More information can be found in the description of [simple_style_sheet](https:/
 
     Available color values: `:black`, `:red`, `:green`, `:yellow`, `:blue`, `:magenta`, `:cyan`, `:white` and a number/string between 0 and 255 that represents a color in xterm 256 color scale.
 
-* `:effect`
+* `:bold_text` (aliases: `:bold`, `:bright_text`, `:bright`)
+* `:underlined_text` (aliases: `:underlined`, `:underline`)
+* `:blinking_text` (aliases: `:blinking`, `:blink`)
+* `:reverse_video_text` (aliases: `:reverse_video`, `:reverse`)
 
-    Available effect values: `:none`, `:bright`, `:underline`, `:blink`, `:reverse`.
+    Available text effect values: `:on`, `:yes`, `true`.
 
 Also, the `:inherit` value can be set for a property, which means that its value will be inherited from the surrounding tag (or be the default value for not nested tags).
 
