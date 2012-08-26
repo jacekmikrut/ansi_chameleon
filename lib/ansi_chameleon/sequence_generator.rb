@@ -8,15 +8,11 @@ module AnsiChameleon
     EFFECTS = { :none => 0, :bright => 1, :underline => 4, :blink => 5, :reverse => 7 }
 
     def self.generate(effect_value, foreground_color_value=nil, background_color_value=nil)
-      if effect_value && effect_value.to_sym == :reset
-        "\033[0m"
-      else
-        [ "\033[0m",
-                    effect_value && effect_sequence(effect_value),
-          foreground_color_value && foreground_color_sequence(foreground_color_value),
-          background_color_value && background_color_sequence(background_color_value)
-        ].compact.join
-      end
+      [ "\033[0m",
+        effect_value && effect_sequence(effect_value),
+        foreground_color_value && foreground_color_sequence(foreground_color_value),
+        background_color_value && background_color_sequence(background_color_value)
+      ].compact.join
     end
 
     def self.effect_sequence(value)

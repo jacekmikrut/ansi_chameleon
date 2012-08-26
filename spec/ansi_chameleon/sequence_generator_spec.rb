@@ -95,10 +95,6 @@ describe AnsiChameleon::SequenceGenerator do
 
   describe ".generate" do
 
-    describe "AnsiChameleon::SequenceGenerator.generate(:reset)" do
-      it { should == "\033[0m" }
-    end
-
     describe "AnsiChameleon::SequenceGenerator.generate(:effect_value, :foreground_color_value, :background_color_value)" do
       it "should delegate sequences generation to proper methods and return received sequences concatenated in proper order" do
         AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence          ).with(:effect_value          ).ordered.and_return('[effect_sequence]'          )
