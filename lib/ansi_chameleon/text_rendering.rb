@@ -8,10 +8,7 @@ module AnsiChameleon
       @stack = Stack.new
       @rendered_text = ''
 
-      original_style = {}
-
-      @stack.push(:style => style_for(nil))
-      rendered_text << sequence_for(current_style) unless current_style == original_style
+      init_default_style
     end
 
     def push_opening_tag(tag)
@@ -39,6 +36,13 @@ module AnsiChameleon
     private
 
     attr_reader :rendered_text
+
+    def init_default_style
+      original_style = {}
+
+      @stack.push(:style => style_for(nil))
+      rendered_text << sequence_for(current_style) unless current_style == original_style
+    end
 
     def current_style
       @stack.top_style
