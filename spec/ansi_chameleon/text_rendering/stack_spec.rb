@@ -11,9 +11,9 @@ describe AnsiChameleon::TextRendering::Stack do
   end
 
   describe "#push and #pop" do
-    let(:item_1) { { :tag => Struct.new(:parent).new, :outer_style => {} } }
-    let(:item_2) { { :tag => Struct.new(:parent).new, :outer_style => {} } }
-    let(:item_3) { { :tag => Struct.new(:parent).new, :outer_style => {} } }
+    let(:item_1) { { :outer_style => {}                                  } }
+    let(:item_2) { { :outer_style => {}, :tag => Struct.new(:parent).new } }
+    let(:item_3) { { :outer_style => {}, :tag => Struct.new(:parent).new } }
 
     context "after a few items were pushed to the stack" do
       before do
@@ -34,26 +34,53 @@ describe AnsiChameleon::TextRendering::Stack do
     let(:tag) { Struct.new(:parent).new }
 
     context "after a tag was pushed to an empty stack" do
-      before { stack.push(:tag => tag, :outer_style => {}) }
+      before { stack.push(:outer_style => {}, :tag => tag) }
 
       it "should assign nil as the tag's parent" do
         tag.parent.should be_nil
       end
     end
 
-    context "after a tag was pushed to a non-empty stack" do
+    context "after a tag was pushed to a stack only containing non-:tag items" do
+      before do
+        stack.push(:outer_style => {})
+        stack.push(:outer_style => {}, :tag => tag)
+      end
+
+      it "should assign nil as the tag's parent" do
+        tag.parent.should be_nil
+      end
+    end
+
+    context "after a tag was pushed to a stack containing both :tag and non-:tag items" do
       let(:tag_1) { Struct.new(:parent).new }
       let(:tag_2) { Struct.new(:parent).new }
       let(:tag_3) { Struct.new(:parent).new }
 
-      before do
-        stack.push(:tag => tag_1, :outer_style => {})
-        stack.push(:tag => tag_2, :outer_style => {})
-        stack.push(:tag => tag_3, :outer_style => {})
+      context "and the previously pushed item is a :tag item" do
+        before do
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_1)
+          stack.push(:outer_style => {}, :tag => tag_2)
+          stack.push(:outer_style => {}, :tag => tag_3)
+        end
+
+        it "should assign the previously pushed tag as the tag's parent" do
+          tag_3.parent.should equal(tag_2)
+        end
       end
 
-      it "should assign the previously pushed tag as the tag's parent" do
-        tag_3.parent.should equal(tag_2)
+      context "and the previously pushed item is a non-:tag item" do
+        before do
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_1)
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_2)
+        end
+
+        it "should assign the previously pushed tag as the tag's parent" do
+          tag_2.parent.should equal(tag_1)
+        end
       end
     end
   end
@@ -63,18 +90,20 @@ describe AnsiChameleon::TextRendering::Stack do
       it { stack.items.should eq([]) }
     end
 
-    context "for a non-empty stack" do
+    context "for a stack containing both :tag and non-:tag items" do
       let(:tag_1) { Struct.new(:parent).new }
       let(:tag_2) { Struct.new(:parent).new }
 
       before do
-        stack.push(:tag => tag_1, :outer_style => {})
-        stack.push(:tag => tag_2, :outer_style => {})
+        stack.push(:outer_style => {})
+        stack.push(:outer_style => {}, :tag => tag_1)
+        stack.push(:outer_style => {}, :tag => tag_2)
       end
 
       it "should be an array containing the pushed items, from bottom to the top" do
-        stack.items.should eq([ { :tag => tag_1, :outer_style => {} },
-                                { :tag => tag_2, :outer_style => {} } ])
+        stack.items.should eq([ { :outer_style => {}                },
+                                { :outer_style => {}, :tag => tag_1 },
+                                { :outer_style => {}, :tag => tag_2 } ])
       end
     end
   end
@@ -84,17 +113,39 @@ describe AnsiChameleon::TextRendering::Stack do
       it { stack.top_tag.should be_nil }
     end
 
-    context "for a non-empty stack" do
+    context "for a stack only containing non-:tag items" do
+      before { stack.push(:outer_style => {}) }
+
+      it { stack.top_tag.should be_nil }
+    end
+
+    context "for a stack containing both :tag and non-:tag items" do
       let(:tag_1) { Struct.new(:parent).new }
       let(:tag_2) { Struct.new(:parent).new }
 
-      before do
-        stack.push(:tag => tag_1, :outer_style => {})
-        stack.push(:tag => tag_2, :outer_style => {})
+      context "and the recently pushed item is a :tag item" do
+        before do
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_1)
+          stack.push(:outer_style => {}, :tag => tag_2)
+        end
+
+        it "should be the most recently pushed tag" do
+          stack.top_tag.should equal(tag_2)
+        end
       end
 
-      it "should be the most recently pushed tag" do
-        stack.top_tag.should equal(tag_2)
+      context "and the recently pushed item is a non-:tag item" do
+        before do
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_1)
+          stack.push(:outer_style => {}, :tag => tag_2)
+          stack.push(:outer_style => {})
+        end
+
+        it "should be the most recently pushed tag" do
+          stack.top_tag.should equal(tag_2)
+        end
       end
     end
   end
@@ -104,17 +155,67 @@ describe AnsiChameleon::TextRendering::Stack do
       it { stack.top_tag_name.should be_nil }
     end
 
-    context "for a non-empty stack" do
+    context "for a stack only containing non-:tag items" do
+      before { stack.push(:outer_style => {}) }
+
+      it { stack.top_tag_name.should be_nil }
+    end
+
+    context "for a stack containing both :tag and non-:tag items" do
+      let(:tag_1) { Struct.new(:name, :parent).new("tag 1") }
+      let(:tag_2) { Struct.new(:name, :parent).new("tag 2") }
+
+      context "and the recently pushed item is a :tag item" do
+        before do
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_1)
+          stack.push(:outer_style => {}, :tag => tag_2)
+        end
+
+        it "should be the most recently pushed tag's name" do
+          stack.top_tag_name.should eq("tag 2")
+        end
+      end
+
+      context "and the recently pushed item is a non-:tag item" do
+        before do
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_1)
+          stack.push(:outer_style => {})
+          stack.push(:outer_style => {}, :tag => tag_2)
+        end
+
+        it "should be the most recently pushed tag's name" do
+          stack.top_tag_name.should eq("tag 2")
+        end
+      end
+    end
+  end
+
+  describe "#tags" do
+    context "for an empty stack" do
+      it { stack.tags.should eq([]) }
+    end
+
+    context "for a stack only containing non-:tag items" do
+      before { stack.push(:outer_style => {}) }
+
+      it { stack.tags.should eq([]) }
+    end
+
+    context "for a stack containing both :tag and non-:tag items" do
       let(:tag_1) { Struct.new(:name, :parent).new("tag 1") }
       let(:tag_2) { Struct.new(:name, :parent).new("tag 2") }
 
       before do
-        stack.push(:tag => tag_1, :outer_style => {})
-        stack.push(:tag => tag_2, :outer_style => {})
+        stack.push(:outer_style => {})
+        stack.push(:outer_style => {}, :tag => tag_1)
+        stack.push(:outer_style => {})
+        stack.push(:outer_style => {}, :tag => tag_2)
       end
 
-      it "should be the most recently pushed tag" do
-        stack.top_tag_name.should eq("tag 2")
+      it "should be the array of the :tag items" do
+        stack.tags.should eq([tag_1, tag_2])
       end
     end
   end
