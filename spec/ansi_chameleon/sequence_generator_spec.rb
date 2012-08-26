@@ -4,17 +4,58 @@ describe AnsiChameleon::SequenceGenerator do
 
   subject { eval(example.example_group.example.example_group.description) }
 
-  describe ".effect_sequence" do
+  describe ".bold_text_sequence" do
 
-    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:none)" do
-      it { should == "\033[0m" }
-    end
-
-    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:bright)" do
+    describe "AnsiChameleon::SequenceGenerator.bold_text_sequence(true)" do
       it { should == "\033[1m" }
     end
 
-    describe "AnsiChameleon::SequenceGenerator.effect_sequence(:invalid_effect_value)" do
+    describe "AnsiChameleon::SequenceGenerator.bold_text_sequence(:invalid_effect_value)" do
+      it do
+        lambda {
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidEffectValueError, "Invalid effect value :invalid_effect_value")
+      end
+    end
+  end
+
+  describe ".underlined_text_sequence" do
+
+    describe "AnsiChameleon::SequenceGenerator.underlined_text_sequence(:yes)" do
+      it { should == "\033[4m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.underlined_text_sequence(:invalid_effect_value)" do
+      it do
+        lambda {
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidEffectValueError, "Invalid effect value :invalid_effect_value")
+      end
+    end
+  end
+
+  describe ".blinking_text_sequence" do
+
+    describe "AnsiChameleon::SequenceGenerator.blinking_text_sequence(:on)" do
+      it { should == "\033[5m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.blinking_text_sequence(:invalid_effect_value)" do
+      it do
+        lambda {
+          subject
+        }.should raise_error(AnsiChameleon::SequenceGenerator::InvalidEffectValueError, "Invalid effect value :invalid_effect_value")
+      end
+    end
+  end
+
+  describe ".reverse_video_text_sequence" do
+
+    describe "AnsiChameleon::SequenceGenerator.reverse_video_text_sequence(true)" do
+      it { should == "\033[7m" }
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.reverse_video_text_sequence(:invalid_effect_value)" do
       it do
         lambda {
           subject
@@ -95,43 +136,42 @@ describe AnsiChameleon::SequenceGenerator do
 
   describe ".generate" do
 
-    describe "AnsiChameleon::SequenceGenerator.generate(:effect => :effect_value, :foreground_color => :foreground_color_value, :background_color => :background_color_value)" do
-      it "should delegate sequences generation to proper methods and return received sequences concatenated in proper order" do
-        AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence          ).with(:effect_value          ).ordered.and_return('[effect_sequence]'          )
-        AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
-        AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
+    describe "AnsiChameleon::SequenceGenerator.generate(:bold_text => :bold_text_value, :underlined_text => :underlined_text_value)" do
+      it "should only generate sequences for given properties" do
+        AnsiChameleon::SequenceGenerator.should_receive(         :bold_text_sequence).with(      :bold_text_value).and_return(      '[bold_text_sequence]')
+        AnsiChameleon::SequenceGenerator.should_receive(   :underlined_text_sequence).with(:underlined_text_value).and_return('[underlined_text_sequence]')
+        AnsiChameleon::SequenceGenerator.should_not_receive(     :blinking_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(:reverse_video_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(  :foreground_color_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(  :background_color_sequence)
 
-        subject.should == "\033[0m[effect_sequence][foreground_color_sequence][background_color_sequence]"
+        subject.should == "\033[0m[bold_text_sequence][underlined_text_sequence]"
       end
     end
 
-    context "AnsiChameleon::SequenceGenerator.generate(:foreground_color => :foreground_color_value, :background_color => :background_color_value)" do
+    describe "AnsiChameleon::SequenceGenerator.generate(:blinking_text => :blinking_text_value, :reverse_video_text => :reverse_video_text_value)" do
       it "should only generate sequences for given properties" do
-        AnsiChameleon::SequenceGenerator.should_not_receive(:effect_sequence)
-        AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
-        AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
+        AnsiChameleon::SequenceGenerator.should_not_receive(         :bold_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(   :underlined_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_receive(         :blinking_text_sequence).with(     :blinking_text_value).and_return(     '[blinking_text_sequence]')
+        AnsiChameleon::SequenceGenerator.should_receive(    :reverse_video_text_sequence).with(:reverse_video_text_value).and_return('[reverse_video_text_sequence]')
+        AnsiChameleon::SequenceGenerator.should_not_receive(  :foreground_color_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(  :background_color_sequence)
+
+        subject.should == "\033[0m[blinking_text_sequence][reverse_video_text_sequence]"
+      end
+    end
+
+    describe "AnsiChameleon::SequenceGenerator.generate(:foreground_color => :foreground_color_value, :background_color => :background_color_value)" do
+      it "should only generate sequences for given properties" do
+        AnsiChameleon::SequenceGenerator.should_not_receive(         :bold_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(   :underlined_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(     :blinking_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_not_receive(:reverse_video_text_sequence)
+        AnsiChameleon::SequenceGenerator.should_receive(      :foreground_color_sequence).with(:foreground_color_value).and_return('[foreground_color_sequence]')
+        AnsiChameleon::SequenceGenerator.should_receive(      :background_color_sequence).with(:background_color_value).and_return('[background_color_sequence]')
 
         subject.should == "\033[0m[foreground_color_sequence][background_color_sequence]"
-      end
-    end
-
-    context "AnsiChameleon::SequenceGenerator.generate(:effect => :effect_value, :background_color => :background_color_value)" do
-      it "should only generate sequences for given properties" do
-        AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence).with(:effect_value).ordered.and_return('[effect_sequence]'          )
-        AnsiChameleon::SequenceGenerator.should_not_receive(:foreground_color_sequence)
-        AnsiChameleon::SequenceGenerator.should_receive(:background_color_sequence).with(:background_color_value).ordered.and_return('[background_color_sequence]')
-
-        subject.should == "\033[0m[effect_sequence][background_color_sequence]"
-      end
-    end
-
-    context "AnsiChameleon::SequenceGenerator.generate(:effect => :effect_value, :foreground_color => :foreground_color_value)" do
-      it "should only generate sequences for given properties" do
-        AnsiChameleon::SequenceGenerator.should_receive(:effect_sequence).with(:effect_value).ordered.and_return('[effect_sequence]'          )
-        AnsiChameleon::SequenceGenerator.should_receive(:foreground_color_sequence).with(:foreground_color_value).ordered.and_return('[foreground_color_sequence]')
-        AnsiChameleon::SequenceGenerator.should_not_receive(:background_color_sequence)
-
-        subject.should == "\033[0m[effect_sequence][foreground_color_sequence]"
       end
     end
   end

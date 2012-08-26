@@ -49,12 +49,4 @@ describe AnsiChameleon::StylePropertyNameTranslator do
   describe ".translate('fg_color')" do
     it { subject.translate('fg_color'        ).should == :foreground_color }
   end
-
-  describe ".translate(:effect)" do
-    it { subject.translate(:effect           ).should == :effect }
-  end
-
-  describe ".translate('effect')" do
-    it { subject.translate('effect'          ).should == :effect }
-  end
 end

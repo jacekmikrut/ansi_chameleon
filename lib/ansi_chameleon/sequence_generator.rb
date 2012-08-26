@@ -5,22 +5,41 @@ module AnsiChameleon
     class InvalidEffectValueError < ArgumentError; end
 
     COLORS = [:black, :red, :green, :yellow, :blue, :magenta, :cyan, :white]
-    EFFECTS = { :none => 0, :bright => 1, :underline => 4, :blink => 5, :reverse => 7 }
 
     NUMBER_FROM_0_TO_255 = proc { |value| value.to_s =~ /^\d+$/ && (0..255).member?(value.to_i) }
     VALID_COLOR_NAME     = proc { |value| COLORS.include?(value.to_s.to_sym) }
+
+    ON = proc { |value| [:on, :yes, true].include?(value) }
 
     def self.generate(style)
       "\033[0m" + style.map { |name, value| send("#{name}_sequence", value) }.join
     end
 
-    def self.effect_sequence(value)
-      if EFFECTS.include?(value.to_sym)
-        "\033[#{EFFECTS[value.to_sym]}m"
+    def self.bold_text_sequence(value)
+      case value
+      when ON then "\033[1m"
+      else raise InvalidEffectValueError.new("Invalid effect value #{value.inspect}")
+      end
+    end
 
-      else
-        raise InvalidEffectValueError.new("Invalid effect value #{value.inspect}")
+    def self.underlined_text_sequence(value)
+      case value
+      when ON then "\033[4m"
+      else raise InvalidEffectValueError.new("Invalid effect value #{value.inspect}")
+      end
+    end
 
+    def self.blinking_text_sequence(value)
+      case value
+      when ON then "\033[5m"
+      else raise InvalidEffectValueError.new("Invalid effect value #{value.inspect}")
+      end
+    end
+
+    def self.reverse_video_text_sequence(value)
+      case value
+      when ON then "\033[7m"
+      else raise InvalidEffectValueError.new("Invalid effect value #{value.inspect}")
       end
     end
 

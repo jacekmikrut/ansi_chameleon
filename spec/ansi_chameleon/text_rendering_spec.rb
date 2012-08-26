@@ -33,7 +33,7 @@ describe AnsiChameleon::TextRendering do
 
     describe "when the style sheet handler has some default values" do
       before do
-        style_sheet_handler.stub(:value_for).with(nil, :effect          ).and_return(:bright)
+        style_sheet_handler.stub(:value_for).with(nil, :bold_text       ).and_return(:on)
         style_sheet_handler.stub(:value_for).with(nil, :background_color).and_return(:blue)
       end
 
@@ -41,13 +41,13 @@ describe AnsiChameleon::TextRendering do
         before { subject.push_text("Some text.") }
 
         it "should start with the sequence for given default values" do
-          expect(subject.to_s).to start_with(sequence(:effect => :bright, :background_color => :blue))
+          expect(subject.to_s).to start_with(sequence(:bold_text => :on, :background_color => :blue))
         end
       end
 
       context "when no text nor tags were pushed" do
         it "should start with the sequence for given default values" do
-          expect(subject.to_s).to start_with(sequence(:effect => :bright, :background_color => :blue))
+          expect(subject.to_s).to start_with(sequence(:bold_text => :on, :background_color => :blue))
         end
       end
     end
@@ -55,15 +55,15 @@ describe AnsiChameleon::TextRendering do
 
   describe "usage scenarios" do
     before do
-      style_sheet_handler.stub(:value_for).with(nil, :effect          ).and_return(:default_effect)
-      style_sheet_handler.stub(:value_for).with(nil, :foreground_color).and_return(:default_fg_color)
-      style_sheet_handler.stub(:value_for).with(nil, :background_color).and_return(:default_bg_color)
+      style_sheet_handler.stub(:value_for).with(nil, :bold_text         ).and_return(:default_bold_text)
+      style_sheet_handler.stub(:value_for).with(nil, :foreground_color  ).and_return(:default_fg_color)
+      style_sheet_handler.stub(:value_for).with(nil, :background_color  ).and_return(:default_bg_color)
     end
 
     describe "for nothing pushed" do
       it "should return rendered text" do
         subject.to_s.should ==
-          "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+          "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
           "#{sequence({})}"
       end
     end
@@ -76,7 +76,7 @@ describe AnsiChameleon::TextRendering do
 
       it "should return rendered text" do
         subject.to_s.should ==
-          "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+          "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
           "First sentence. Second sentence." +
           "#{sequence({})}"
       end
@@ -87,11 +87,11 @@ describe AnsiChameleon::TextRendering do
         tag_a_opening.should_receive(:parent=).with(nil)
         tag_b_opening.should_receive(:parent=).with(nil)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect          ).and_return(nil                   )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :bold_text       ).and_return(nil                   )
         style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color).and_return(tag_a_foreground_color)
         style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color).and_return(tag_a_background_color)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect          ).and_return(tag_b_effect          )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :bold_text       ).and_return(tag_b_bold_text       )
         style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color).and_return(tag_b_foreground_color)
         style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color).and_return(tag_b_background_color)
 
@@ -117,16 +117,16 @@ describe AnsiChameleon::TextRendering do
       shared_examples_for "some text and non-nested tags" do
         it "should return rendered text" do
           subject.to_s.should ==
-            "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+            "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
               "First sentence. " +
 
               "#{sequence(:foreground_color => :default_fg_color, :background_color => :tag_a_bg_color)}" +
                 "Text in tag_a." +
-              "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+              "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
 
-              "#{sequence(:effect => :tag_b_effect, :foreground_color => :tag_b_fg_color, :background_color => :tag_b_bg_color)}" +
+              "#{sequence(:bold_text => :tag_b_bold_text, :foreground_color => :tag_b_fg_color, :background_color => :tag_b_bg_color)}" +
                 "Text in tag_b." +
-              "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+              "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
 
               " Second sentence." +
             "#{sequence({})}"
@@ -137,7 +137,7 @@ describe AnsiChameleon::TextRendering do
         let(:tag_a_foreground_color) { :inherit        }
         let(:tag_a_background_color) { :tag_a_bg_color }
 
-        let(:tag_b_effect          ) { :tag_b_effect   }
+        let(:tag_b_bold_text       ) { :tag_b_bold_text }
         let(:tag_b_foreground_color) { :tag_b_fg_color }
         let(:tag_b_background_color) { :tag_b_bg_color }
 
@@ -148,7 +148,7 @@ describe AnsiChameleon::TextRendering do
         let(:tag_a_foreground_color) { "inherit"        }
         let(:tag_a_background_color) { "tag_a_bg_color" }
 
-        let(:tag_b_effect          ) { "tag_b_effect"   }
+        let(:tag_b_bold_text       ) { "tag_b_bold_text" }
         let(:tag_b_foreground_color) { "tag_b_fg_color" }
         let(:tag_b_background_color) { "tag_b_bg_color" }
 
@@ -161,11 +161,11 @@ describe AnsiChameleon::TextRendering do
         tag_a_opening.should_receive(:parent=).with(nil)
         tag_b_opening.should_receive(:parent=).with(tag_a_opening)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :effect          ).and_return(nil                   )
+        style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :bold_text       ).and_return(nil                   )
         style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :foreground_color).and_return(tag_a_foreground_color)
         style_sheet_handler.should_receive(:value_for).with(tag_a_opening, :background_color).and_return(tag_a_background_color)
 
-        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :effect          ).and_return(tag_b_effect          )
+        style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :bold_text       ).and_return(tag_b_bold_text       )
         style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :foreground_color).and_return(nil                   )
         style_sheet_handler.should_receive(:value_for).with(tag_b_opening, :background_color).and_return(tag_b_background_color)
 
@@ -192,7 +192,7 @@ describe AnsiChameleon::TextRendering do
       shared_examples_for "some text and nested tags" do
         it "should return rendered text" do
           subject.to_s.should ==
-            "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+            "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
               "First sentence. " +
 
               "#{sequence(:foreground_color => :tag_a_fg_color, :background_color => :tag_a_bg_color)}" +
@@ -202,7 +202,7 @@ describe AnsiChameleon::TextRendering do
                   "Text in tag_b." +
                 "#{sequence(:foreground_color => :tag_a_fg_color, :background_color => :tag_a_bg_color)}" +
 
-              "#{sequence(:effect => :default_effect, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
+              "#{sequence(:bold_text => :default_bold_text, :foreground_color => :default_fg_color, :background_color => :default_bg_color)}" +
 
               " Second sentence." +
             "#{sequence({})}"
@@ -213,7 +213,7 @@ describe AnsiChameleon::TextRendering do
         let(:tag_a_foreground_color) { :tag_a_fg_color }
         let(:tag_a_background_color) { :tag_a_bg_color }
 
-        let(:tag_b_effect          ) { :inherit        }
+        let(:tag_b_bold_text       ) { :inherit        }
         let(:tag_b_background_color) { :tag_b_bg_color }
 
         include_examples "some text and nested tags"
@@ -223,7 +223,7 @@ describe AnsiChameleon::TextRendering do
         let(:tag_a_foreground_color) { "tag_a_fg_color" }
         let(:tag_a_background_color) { "tag_a_bg_color" }
 
-        let(:tag_b_effect          ) { "inherit"        }
+        let(:tag_b_bold_text       ) { "inherit"        }
         let(:tag_b_background_color) { "tag_b_bg_color" }
 
         include_examples "some text and nested tags"

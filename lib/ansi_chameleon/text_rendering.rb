@@ -1,7 +1,10 @@
 module AnsiChameleon
   class TextRendering
 
-    PROPERTY_NAMES = [:effect, :foreground_color, :background_color].freeze
+    PROPERTY_NAMES = [
+      :bold_text, :underlined_text, :blinking_text, :reverse_video_text,
+      :foreground_color, :background_color
+    ].freeze
 
     def initialize(style_sheet_handler)
       @style_sheet_handler = style_sheet_handler

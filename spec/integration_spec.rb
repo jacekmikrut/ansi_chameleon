@@ -5,7 +5,7 @@ describe "Single use" do
   it "should properly render the output" do
     AnsiChameleon.render(
       '<poetry class="short">There are <number>3</number> oranges on the table.</poetry>',
-      'poetry.short' => { :effect => :bright }, 'number' => { :fg_color => :blue }
+      'poetry.short' => { :bold => true }, 'number' => { :fg_color => :blue }
     )
     .should == "\e[0m\e[1mThere are \e[0m\e[34m3\e[0m\e[1m oranges on the table.\e[0m"
   end
@@ -14,7 +14,7 @@ end
 describe "Multiple use" do
 
   it "should properly render the output" do
-    text_renderer = AnsiChameleon::TextRenderer.new("poetry.short" => { :effect => :bright }, "number" => { :fg_color => :blue })
+    text_renderer = AnsiChameleon::TextRenderer.new("poetry.short" => { :bold => true }, "number" => { :fg_color => :blue })
 
     text_renderer.render('<poetry class="short">There are <number>2</number> oranges on the table.</poetry>')
     .should == "\e[0m\e[1mThere are \e[0m\e[34m2\e[0m\e[1m oranges on the table.\e[0m"
